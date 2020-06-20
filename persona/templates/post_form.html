@@ -1,0 +1,329 @@
+{% include "base.html" %}
+{% load static %}
+
+<script async="" defer="defer" src="//platform.instagram.com/en_US/embeds.js"></script>
+<link rel="stylesheet" href="{% static 'form.css' %}">
+<link rel="stylesheet" href="{% static 'style.css' %}">
+{% block body %}
+{% endblock body %}
+
+<div id="form-loading">
+  <div id="form-loading-content">
+    {% if video or audio or image %}
+      <div class="loadingio-spinner-ripple-v6hd6pdlfln"><div class="ldio-t1bwowcv8rf">
+      <div></div><div></div>
+      </div></div>
+    {% else %}
+      <div class="loadingio-spinner-eclipse-86c091edtc3"><div class="ldio-u7fi3e6ek">
+      <div></div>
+      </div></div>
+    {% endif %}
+    <div id="loading-txt">
+      Creating Post . . .<br>
+      <span id="loading-dont-leave">Please, Dont leave this page!</span>
+      {% if video or audio or image %}
+        <br>
+        <span style="color:red; font-size:20px;">Large files take time to upload!</span>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div id="main-div-form">
+
+  <div id="main-form">
+    {% if text %}
+      <h3>{% if edit %}Edit{% else %}Create{% endif %} Text Post</h3>
+    {% elif image %}
+      <h3>{% if edit %}Edit{% else %}Create{% endif %} Image Post</h3>
+    {% elif video %}
+      <h3>{% if edit %}Edit{% else %}Create{% endif %} Video Post</h3>
+    {% elif audio %}
+      <h3>{% if edit %}Edit{% else %}Create{% endif %} Audio Post</h3>
+    {% elif link %}
+      <h3>{% if edit %}Edit{% else %}Create{% endif %} Link Post</h3>
+    {% elif youtube %}
+      <h3>{% if edit %}Edit{% else %}Share{% endif %} YouTube Video</h3>
+    {% elif instagram %}
+      <h3>{% if edit %}Edit{% else %}Share{% endif %} Instagram Post</h3>
+    {% endif %}
+    {% if message %}
+      <div id="message">
+        <strong>{{ message }}</strong>
+      </div>
+    {% endif %}
+    <form class="f" id="f" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% for f in form %}
+        {{ f.label_tag }} &nbsp; &nbsp;
+        {{ f }}
+        {% if f.help_text %}
+          <br>
+          <small style="color: gray;">{{ f.help_text }}</small>
+        {% endif %}
+        {% for error in f.errors %}
+          <br>
+          <small style="color: red;">{{ error }}</small>
+        {% endfor %}
+        <br><br>
+      {% endfor %}
+      <button type="submit" id="button" class="hide-for-mobile">
+        {% if text %}
+          {% if edit %}Edit{% else %}Post{% endif %} Text
+        {% elif image %}
+          {% if edit %}Edit{% else %}Post{% endif %} Image
+        {% elif video %}
+          {% if edit %}Edit{% else %}Post{% endif %} Video
+        {% elif audio %}
+          {% if edit %}Edit{% else %}Post{% endif %} Audio
+        {% elif link %}
+          {% if edit %}Edit{% else %}Post{% endif %} Link
+        {% elif youtube %}
+          {% if edit %}Edit{% else %}Share{% endif %} YouTube Video
+        {% elif instagram %}
+          {% if edit %}Edit{% else %}Share{% endif %} Instagram Post
+        {% endif %}
+      </button>
+      {% if youtube or instagram %}
+      <button type="submit" id="button-yt-ig" class="hide-for-pc">
+        {% if youtube %}
+          {% if edit %}Edit{% else %}Share{% endif %} YouTube Video
+        {% elif instagram %}
+          {% if edit %}Edit{% else %}Share{% endif %} Instagram Post
+        {% endif %}
+      </button>
+      {% else %}
+      <button type="submit" class="hide-for-pc" id="button">
+        {% if text %}
+          {% if edit %}Edit{% else %}Post{% endif %} Text
+        {% elif image %}
+          {% if edit %}Edit{% else %}Post{% endif %} Image
+        {% elif video %}
+          {% if edit %}Edit{% else %}Post{% endif %} Video
+        {% elif audio %}
+          {% if edit %}Edit{% else %}Post{% endif %} Audio
+        {% elif link %}
+          {% if edit %}Edit{% else %}Post{% endif %} Link
+        {% endif %}
+      </button>
+      {% endif %}
+    </form>
+    {% if youtube %}
+      <div class="youtube-info">
+        <h6>How to get "YouTube Video Share Link":</h6>
+        <div class="steps">
+          <strong>Step 1:</strong>&nbsp; Go to <a href="https://www.youtube.com/" target="_blank">YouTube</a> &nbsp;<strong>></strong>&nbsp; Select the video you want to share
+        </div>
+        <div class="steps">
+          <strong>Step 2:</strong>&nbsp; Click on "Share"  &nbsp;<strong>></strong>&nbsp; "Copy link"
+        </div>
+        <div class="steps">
+          <strong>Step 3:</strong>&nbsp; Come back to this Page &nbsp;<strong>></strong>&nbsp; Paste it in 'Youtube Video Share Link'.
+        </div>
+        <div class="youtube-note hide-for-pc">
+          Note: &nbsp;Some YouTube videos are not allowed to embed. To check, Play the YouTube video here, and preview.
+        </div>
+      </div>
+    {% endif %}
+    {% if instagram %}
+      <div class="youtube-info">
+        <h6>How to get "Instagram Post Share Link":</h6>
+        <div class="steps">
+          <strong>Step 1:</strong>&nbsp; Go to <a href="https://www.instagram.com/" target="_blank">Instagram</a> &nbsp;<strong>></strong>&nbsp; Select the 'Instagram Post' you want to share
+        </div>
+        <div class="steps">
+          <strong>Step 2:</strong>&nbsp; Click on ' <span id="test"></span>' at top right corner of 'Instagram Post' &nbsp;<strong>></strong>&nbsp; Click on <br> 'Copy link'
+        </div>
+        <div class="steps">
+          <strong>Step 3:</strong>&nbsp; Come back to this Page &nbsp;<strong>></strong>&nbsp; Paste it in 'Instagram Post Share Link'.
+        </div>
+        <div class="youtube-note">
+          Note: &nbsp;You can't share 'Instagram Posts' of 'Instagram Private Accounts'.
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="p-form">
+    <div class="post form-post">
+      <div class="author-profile">
+        <a href="{% url 'persona:profile' request.user.id %}" class="auth-link">
+          <div class="auth-p">
+            <img src="{{ request.user.profile.dp.url }}" class="author-dp">
+            <strong class="author-username">{{ request.user.username }}</strong>
+          </div>
+        </a>
+        <div class="date-time" id="date-time"></div>
+      </div>
+      {% if image %}
+        <div id="img-post">
+          <img id="post-img">
+        </div>
+      {% elif video %}
+        <div id="vid-post">
+          <h5 class="vid-title" id="f_title"></h5>
+          <video id="post-vid" controls>
+          </video>
+        </div>
+      {% elif audio %}
+        <div id="aud-post">
+          <h5 class="aud-title" id="f_title"></h5>
+          <audio controls id="post-aud">
+          </audio>
+        </div>
+      {% elif text %}
+        <div id="txt-post">
+          <pre id="post-txt"></pre>
+        </div>
+      {% elif link %}
+        <div id="link-post">
+          <h5 class="link-title" id="f_title"></h5>
+          <a href="" id="post-link" target="_blank"></a>
+        </div>
+      {% elif youtube %}
+        <div id="youtube-post">
+        </div>
+      {% elif instagram %}
+        <div id="insta-post">
+        </div>
+      {% endif %}
+      <div class="fun_post">
+        <div class="fun-icon-place">
+          <div class="fun-icon">
+            <button class="likebutton" id="like{{ post.id }}" data-catid="{{ post.id }}"><img src="https://img.icons8.com/nolan/27/like.png"/></button>
+            <div class="all_likes" id="all_likes{{ post.id }}" data-catid="{{ post.id }}">0 Likes</div>
+          </div>
+          <span class="fun-icon">
+            <div class="fun-icon-icon" id="comment-icon"><img src="https://img.icons8.com/ios/23/000000/comments.png"/></div>
+            <div class="fun-icon-txt hide-for-mobile">0 Comments</div>
+          </span>
+          <div class="open-share fun-icon">
+            <div class="fun-icon-icon"><img src="https://img.icons8.com/ios/25/000000/forward-arrow.png"/></div>
+            <div class="fun-icon-txt hide-for-mobile">Share</div>
+          </div>
+        </div>
+        <a class="all-comments">Hashtags</a>
+      </div>
+      <div class="post-info">
+        <pre id="dst_here"></pre>
+      </div>
+      <div class="post-tags" style="display: block; color: blue;">
+        <p id="tags_here"></p>
+      </div>
+    </div>
+    {% if youtube %}
+    <div class="youtube-note hide-for-mobile">
+      Note: &nbsp;Some YouTube videos are not allowed to embed. <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            To check, Play the YouTube video here, and preview.
+    </div>
+    {% endif %}
+  </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script type="text/javascript">
+
+  const monthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+  var d = new Date();
+  var time_h = d.getHours()
+  var ap = ' a.m.'
+  if (d.getHours() > 12){
+    time_h -= 12;
+    ap = ' p.m.'
+  }
+  document.getElementById('date-time').innerHTML = monthNames[d.getMonth()] + ' '  + d.getDate() + ', ' + d.getFullYear() + '<br>' + time_h + ':' + d.getMinutes() + ' p.m.';
+
+  $('#id_tags').on('input', function(){
+    var tags = document.getElementById('id_tags');
+    var seperate_tags = tags.value.split(',');
+    var i;
+    var some_var = '';
+    for(i=0; i < seperate_tags.length; i++){
+      some_var += ' #' + seperate_tags[i];
+      $('#tags_here').html(some_var);
+    }
+  })
+
+  {% if video or audio or link %}
+    var title = document.getElementById('id_title');
+    title.oninput = function(event){
+      var title_here = document.getElementById('f_title');
+      title_here.innerHTML = title.value;
+    }
+  {% endif %}
+
+  {% if image or video or audio or youtube %}
+    var dst = document.getElementById('id_dst');
+    dst.oninput = function(event){
+      var dst_here = document.getElementById('dst_here');
+      dst_here.innerHTML = dst.value;
+    }
+  {% endif %}
+
+  {% if image %}
+    var img = document.getElementById('id_img');
+    img.onchange = function(event){
+      var output = document.getElementById('post-img');
+      output.src = URL.createObjectURL(event.target.files[0]);
+      output.onload = function() {
+        URL.revokeObjectURL(output.src) // free memory
+      }
+    }
+  {% elif video %}
+    var vid = document.getElementById('id_vid');
+    vid.onchange = function(event){
+      var output = document.getElementById('post-vid');
+      output.src = URL.createObjectURL(event.target.files[0]);
+      output.onload = function(){
+        URL.revokeObjectURL(output.src)
+      }
+    }
+  {% elif audio %}
+    var aud = document.getElementById('id_aud');
+    aud.onchange = function(event){
+      var output = document.getElementById('post-aud');
+      output.src = URL.createObjectURL(event.target.files[0]);
+      output.onload = function(){
+        URL.revokeObjectURL(output.src)
+      }
+    }
+  {% elif text %}
+    var txt = document.getElementById('id_txt');
+    txt.oninput = function(event){
+      var txt_here = document.getElementById('post-txt');
+      txt_here.innerHTML = txt.value;
+    }
+  {% elif link %}
+    var link = document.getElementById('id_link');
+    link.oninput = function(event){
+      var link_here = document.getElementById('post-link');
+      var this_link = link.value.substring(0, 60);
+      if (this_link.length > 59){
+        this_link = link.value.substring(0, 60) + "...";
+      }
+      link_here.innerHTML = this_link;
+      link_here.href = link.value;
+    }
+  {% elif youtube %}
+    var youtube = document.getElementById('id_youtube');
+    youtube.oninput = function(event){
+      uv = youtube.value
+      var youtube_link = uv.substring(17);
+      var youtube_here = document.getElementById('youtube-post');
+      youtube_here.innerHTML = "<iframe width='100%' height='339' src='https://www.youtube.com/embed/" + youtube_link + "' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>"
+    }
+  {% elif instagram %}
+    var insta = document.getElementById('id_insta');
+    insta.oninput = function(event){
+      $('#insta-post').html('<blockquote class="instagram-media" data-instgrm-permalink="' + insta.value + '" data-instgrm-version="12" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:595px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"></blockquote>');
+      window.instgrm.Embeds.process();
+    }
+  {% endif %}
+
+  $('#f').submit(function(){
+    var loading = document.getElementById('form-loading');
+    loading.style.display = "block";
+  })
+
+</script>

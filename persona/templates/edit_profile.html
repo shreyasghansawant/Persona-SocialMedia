@@ -1,0 +1,157 @@
+{% include "base.html" %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'form.css' %}">
+{% block body %}
+{% endblock body %}
+
+<div id="form-loading">
+  <div id="form-loading-content">
+    <div class="loadingio-spinner-gear-79p8ckcu4f3"><div class="ldio-a47uklsyd4">
+    <div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    </div></div>
+    <div id="loading-txt">
+      Editing Persona . . .<br>
+      <span id="loading-dont-leave">Please, Dont leave this page!</span>
+    </div>
+  </div>
+</div>
+
+{% if messages %}
+  {% for message in messages %}
+      <div class="{{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+
+<div id="main-div-form-persona">
+
+  <h3 class="hide-for-pc" id="edit-persona-title">Edit Your Persona</h3>
+  <div class="hide-for-pc" id="dp-div">
+    <img src="{{ user.profile.dp.url }}" id="dp_here">
+  </div>
+
+  <div id="main-form">
+    <h3 class="hide-for-mobile">Edit Your Persona</h3>
+    {% if new_user %}
+    <form class="f" id="f" action="{% url 'persona:new-profile' %}" method="post" enctype="multipart/form-data">
+    {% else %}
+    <form class="f" id="f" action="{% url 'persona:edit-profile' %}" method="post" enctype="multipart/form-data">
+    {% endif %}
+      {% csrf_token %}
+      {% for f in form %}
+        {{ f.label_tag }} &nbsp; &nbsp;
+        {{ f }}
+        {% if f.help_text %}
+          <small style="color: gray;">{{ f.help_text }}</small>
+        {% endif %}
+        {% for error in f.errors %}
+          <br>
+          <small style="color: red;">{{ error }}</small>
+        {% endfor %}
+        <br><br>
+        {% if new_user %}<br>{% endif %}
+      {% endfor %}
+      {% for f in user_form %}
+        {{ f.label_tag }} &nbsp; &nbsp;
+        {{ f }}
+        {% if f.help_text %}
+          <small style="color: gray;">{{ f.help_text }}</small>
+        {% endif %}
+        {% for error in f.errors %}
+          <br>
+          <small style="color: red;">{{ error }}</small>
+        {% endfor %}
+        <br><br>
+      {% endfor %}
+      <button type="submit" id="button" class="hide-for-mobile">Edit Persona</button>
+      <button type="submit" id="edit-button-mobile" class="hide-for-pc">Edit Persona</button>
+      {% if new_user %}
+        <br class="hide-for-pc">
+        <a href="{% url 'persona:index' %}" id="skip">Skip</a>
+      {% endif %}
+    </form>
+  </div>
+
+  <div id="dp-div" class="hide-for-mobile">
+    <img src="{{ user.profile.dp.url }}" id="dp_here">
+    {% if new_user %}
+    {% else %}
+      <div id="more-options">
+        <a href="{% url 'persona:change-password' %}" id="change-password">Change Password</a>
+        <br><br>
+        <button id="delete-account">Delete Account</button>
+
+        <div class="d-modal" id="d-modal">
+          <div class="d-modal-content">
+            <strong id="areusure">Your Account Will Be Permanently Deleted!</strong>
+            <div class="btn-area">
+              <form action="{% url 'persona:delete-account' %}" method="post">
+                {% csrf_token %}
+                <br>
+                Enter username to conform: <input type="text" name="c_username">
+                <button class="go-back">Go Back</button>
+                <button type="submit" id="delete-btn">Delete Account</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="hide-for-pc">
+    {% if new_user %}
+    {% else %}
+      <div id="more-options">
+        <a href="{% url 'persona:change-password' %}" id="change-password">Change Password</a>
+        <br><br>
+        <button id="delete-account">Delete Account</button>
+
+        <div class="d-modal" id="d-modal">
+          <div class="d-modal-content">
+            <strong id="areusure">Your Account Will Be Permanently Deleted!</strong>
+            <div class="btn-area">
+              <form action="{% url 'persona:delete-account' %}" method="post">
+                {% csrf_token %}
+                <br>
+                Enter username to conform: <input type="text" name="c_username">
+                <button class="go-back">Go Back</button>
+                <button type="submit" id="delete-btn">Delete Account</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<script type="text/javascript">
+  var dp = document.getElementById('id_dp');
+  dp.onchange = function(event){
+    var dp_here = document.getElementById('dp_here');
+    dp_here.src = URL.createObjectURL(event.target.files[0]);
+    dp_here.onload = function(){
+      URL.revokeObjectURL(dp_here.src)
+    }
+  }
+
+  $('#f').submit(function(){
+    var loading = document.getElementById('form-loading');
+    loading.style.display = "block";
+  })
+
+  $('#delete-account').click(function(){
+    var d_modal = document.getElementById("d-modal");
+    d_modal.style.display = "block";
+    $(".go-back").click(function(){
+      d_modal.style.display = "none";
+    });
+    window.onclick = function(event){
+     if(event.target == d_modal){
+       d_modal.style.display = "none";
+     }
+    }
+  });
+</script>

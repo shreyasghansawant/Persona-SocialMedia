@@ -1,0 +1,1056 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+<link href="https://fonts.googleapis.com/css?family=Comic+Neue&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'detail.css' %}">
+<link rel="stylesheet" href="{% static 'profile.css' %}">
+<script async="" defer="defer" src="//platform.instagram.com/en_US/embeds.js"></script>
+{% endblock head %}
+
+{% block body %}
+<div class="main-div">
+  <div class="p-div">
+    <div id="dp-div">
+      <img src="{{ user.profile.dp.url }}" id="dp">
+    </div>
+    <div id="info-div">
+      <div id="top-1">
+        <div>
+          <h3 id="username">
+            {{ user.username }}
+            {% if user.profile.verified %}
+              <img src="https://img.icons8.com/color/17/000000/verified-account.png" style="margin: 0px; padding: 0px;">
+            {% endif %}
+          </h3>
+          <h5 id="name">{{ user.first_name }} {{ user.last_name }}</h5>
+          <div id="dob" class="hide-for-pc">DOB: {{ user.profile.dob }}</div>
+          <br class="hide-for-mobile">
+          <div id="info" class="hide-for-mobile">
+            <strong>{{ no_posts }} Posts</strong>
+            <strong class="update-followers">{{ no_followers }} Followers</strong>
+            <strong>{{ no_following }} Following</strong>
+          </div>
+          <br class="hide-for-mobile">
+          <div id="dob" class="hide-for-mobile">DOB: {{ user.profile.dob }}</div>
+          <br class="hide-for-mobile">
+          {% if user.profile.bio == "" %}
+            <p id="bio" class="hide-for-mobile">Bio: No bio.</p>
+          {% else %}
+            <p id="bio" class="hide-for-mobile">Bio: {{ user.profile.bio }}</p>
+          {% endif %}
+        </div>
+        <div id="editit-p" class="hide-for-mobile">
+          {% if follow == True %}
+            <div class="main-follow" id="unfollow{{ user.id }}" data-catid="{{ user.id }}">
+              <button id="edit1-p-uf">Unfollow</button>
+            </div>
+          {% elif follow == False %}
+            <div class="main-follow" id="direct-follow{{ user.id }}" data-catid="{{ user.id }}">
+              <button id="edit1-p">Follow</button>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hide-for-pc">
+    <div id="info-mobile">
+      <strong>{{ no_posts }} Posts</strong>
+      <strong class="update-followers" id="mob-followers">{{ no_followers }} Followers</strong>
+      <strong id="mob-following">{{ no_following }} Following</strong>
+    </div>
+    <p id="bio">Bio: {{ user.profile.bio }}</p>
+    <div id="editit-p">
+      {% if follow == True %}
+        <div class="main-follow" id="unfollow-mob{{ user.id }}" data-catid="{{ user.id }}">
+          <button id="edit1-p-uf">Unfollow</button>
+        </div>
+      {% elif follow == False %}
+        <div class="main-follow" id="direct-follow-mob{{ user.id }}" data-catid="{{ user.id }}">
+          <button id="edit1-p">Follow</button>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+  <hr style="margin: 0px;">
+
+
+  <div class="main-divit">
+
+    <div class="followers hide-for-mobile">
+      <h5 class="ff update-followers">{{ no_followers }} Followers</h5>
+      <a href="{% url 'persona:profile' request.user.id %}" class="user_link" id="i-follow-unfollow">
+        <div class="p_user">
+          <img src="{{ request.user.profile.dp.url }}" alt="Profile Picture" height=50px id="dp_img_f">
+          <div id="username_f">
+            <div>
+              {{ request.user.username }}
+              {% if request.user.profile.verified %}
+                <img src="https://img.icons8.com/color/17/000000/verified-account.png" style="margin: 0px; padding: 0px;">
+              {% endif %}
+            </div>
+            <div id="user_name_f">{{ request.user.first_name }} {{ request.user.last_name }}</div>
+          </div>
+        </div>
+      </a>
+      {% if follow == True %}
+        <a href="{% url 'persona:profile' request.user.id %}" class="user_link" id="i-follow-real">
+          <div class="p_user">
+            <img src="{{ request.user.profile.dp.url }}" alt="Profile Picture" height=50px id="dp_img_f">
+            <div id="username_f">
+              <div>
+                {{ request.user.username }}
+                {% if request.user.profile.verified %}
+                  <img src="https://img.icons8.com/color/17/000000/verified-account.png" style="margin: 0px; padding: 0px;">
+                {% endif %}
+              </div>
+              <div id="user_name_f">{{ request.user.first_name }} {{ request.user.last_name }}</div>
+            </div>
+          </div>
+        </a>
+      {% endif %}
+      {% for f in followers %}
+        <a href="{% url 'persona:profile' f.followed_by.id %}" class="user_link">
+          <div class="p_user">
+            <img src="{{ f.followed_by.profile.dp.url }}" alt="Profile Picture" height=50px id="dp_img_f">
+            <div id="username_f">
+              <div>
+                {{ f.followed_by.username }}
+                {% if f.followed_by.profile.verified %}
+                  <img src="https://img.icons8.com/color/17/000000/verified-account.png" style="margin: 0px; padding: 0px;">
+                {% endif %}
+              </div>
+              <div id="user_name_f">{{ f.followed_by.first_name }} {{ f.followed_by.last_name }}</div>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+      {% for f in f_followers %}
+        <div class="p_user_f">
+          <a href="{% url 'persona:profile' f.followed_by.id %}" class="p_user_f-two">
+            <img src="{{ f.followed_by.profile.dp.url }}" alt="Profile Picture" height=50px id="dp_img_f">
+            <div id="username_f">
+              <div class="username_username">
+                {{ f.followed_by.username }}
+                {% if f.followed_by.profile.verified %}
+                  <img src="https://img.icons8.com/color/17/000000/verified-account.png" style="margin: 0px; padding: 0px;">
+                {% endif %}
+              </div>
+              <div id="user_name_f">{{ f.followed_by.first_name }} {{ f.followed_by.last_name }}</div>
+            </div>
+          </a>
+          <div class="follow f-f-follow{{ f.followed_by.id }}" data-catid="{{ f.followed_by.id }}">
+            <button class="f-btn_f">Follow</button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!--
+    ##########################
+    Post Part starts from Here
+    ##########################
+    -->
+    <div class="posts">
+      <div class="infinite-container">
+      {% for post, liked, likes, comments, post_likes, know_post_likes, post_comments, tags in posts %}
+        <div class="infinite-item post">
+          <div class="author-profile">
+            <a href="{% url 'persona:profile' post.author.id %}" class="auth-link">
+              <div class="auth-p">
+                <img src="{{ post.author.profile.dp.url }}" class="author-dp">
+                <strong class="author-username">{{ post.author.username }}</strong>
+              </div>
+            </a>
+            <div class="date-time">
+              {{ post.date }} <br> {{ post.time }}
+            </div>
+          </div>
+          {% if post.img %}
+            <div id="img-post">
+              <img src="{{ post.img.url }}" id="post-img">
+            </div>
+          {% elif post.vid %}
+            <div id="vid-post">
+              <h5 id="vid-title">{{ post.title }}</h5>
+              <video id="post-vid" controls>
+                <source src="{{ post.vid.url }}">
+              </video>
+            </div>
+          {% elif post.aud %}
+            <div id="aud-post">
+              <h5 id="aud-title">{{ post.title }}</h5>
+              <audio controls id="post-aud">
+                <source src="{{ post.aud.url }}">
+              </audio>
+            </div>
+          {% elif post.txt %}
+            <div id="txt-post">
+              <p id="post-txt">{{ post.txt|linebreaksbr }}</p>
+            </div>
+          {% elif post.link %}
+            <div id="link-post">
+              <h5 id="link-title">{{ post.title }}</h5>
+              {{ post.link|urlizetrunc:60 }}
+            </div>
+          {% elif post.youtube %}
+            <div id="youtube-post" class="hide-for-mobile">
+              <iframe width="99.9%" height="338" src="https://www.youtube.com/embed/{{ post.youtube }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div id="youtube-post" class="hide-for-pc">
+              <iframe width="99.9%" height="205" src="https://www.youtube.com/embed/{{ post.youtube }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+          {% elif post.insta %}
+            <div id="insta-post">
+              <blockquote class="instagram-media" data-instgrm-permalink="{{ post.insta }}" data-instgrm-version="12" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:600px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:16px;"> <a href="{{ post.insta }}" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank"> <div style=" display: flex; flex-direction: row; align-items: center;"> <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"></div></div></div><div style="padding: 19% 0;"></div> <div style="display:block; height:50px; margin:0 auto 12px; width:50px;"><svg width="50px" height="50px" viewBox="0 0 60 60" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-511.000000, -20.000000)" fill="#000000"><g><path d="M556.869,30.41 C554.814,30.41 553.148,32.076 553.148,34.131 C553.148,36.186 554.814,37.852 556.869,37.852 C558.924,37.852 560.59,36.186 560.59,34.131 C560.59,32.076 558.924,30.41 556.869,30.41 M541,60.657 C535.114,60.657 530.342,55.887 530.342,50 C530.342,44.114 535.114,39.342 541,39.342 C546.887,39.342 551.658,44.114 551.658,50 C551.658,55.887 546.887,60.657 541,60.657 M541,33.886 C532.1,33.886 524.886,41.1 524.886,50 C524.886,58.899 532.1,66.113 541,66.113 C549.9,66.113 557.115,58.899 557.115,50 C557.115,41.1 549.9,33.886 541,33.886 M565.378,62.101 C565.244,65.022 564.756,66.606 564.346,67.663 C563.803,69.06 563.154,70.057 562.106,71.106 C561.058,72.155 560.06,72.803 558.662,73.347 C557.607,73.757 556.021,74.244 553.102,74.378 C549.944,74.521 548.997,74.552 541,74.552 C533.003,74.552 532.056,74.521 528.898,74.378 C525.979,74.244 524.393,73.757 523.338,73.347 C521.94,72.803 520.942,72.155 519.894,71.106 C518.846,70.057 518.197,69.06 517.654,67.663 C517.244,66.606 516.755,65.022 516.623,62.101 C516.479,58.943 516.448,57.996 516.448,50 C516.448,42.003 516.479,41.056 516.623,37.899 C516.755,34.978 517.244,33.391 517.654,32.338 C518.197,30.938 518.846,29.942 519.894,28.894 C520.942,27.846 521.94,27.196 523.338,26.654 C524.393,26.244 525.979,25.756 528.898,25.623 C532.057,25.479 533.004,25.448 541,25.448 C548.997,25.448 549.943,25.479 553.102,25.623 C556.021,25.756 557.607,26.244 558.662,26.654 C560.06,27.196 561.058,27.846 562.106,28.894 C563.154,29.942 563.803,30.938 564.346,32.338 C564.756,33.391 565.244,34.978 565.378,37.899 C565.522,41.056 565.552,42.003 565.552,50 C565.552,57.996 565.522,58.943 565.378,62.101 M570.82,37.631 C570.674,34.438 570.167,32.258 569.425,30.349 C568.659,28.377 567.633,26.702 565.965,25.035 C564.297,23.368 562.623,22.342 560.652,21.575 C558.743,20.834 556.562,20.326 553.369,20.18 C550.169,20.033 549.148,20 541,20 C532.853,20 531.831,20.033 528.631,20.18 C525.438,20.326 523.257,20.834 521.349,21.575 C519.376,22.342 517.703,23.368 516.035,25.035 C514.368,26.702 513.342,28.377 512.574,30.349 C511.834,32.258 511.326,34.438 511.181,37.631 C511.035,40.831 511,41.851 511,50 C511,58.147 511.035,59.17 511.181,62.369 C511.326,65.562 511.834,67.743 512.574,69.651 C513.342,71.625 514.368,73.296 516.035,74.965 C517.703,76.634 519.376,77.658 521.349,78.425 C523.257,79.167 525.438,79.673 528.631,79.82 C531.831,79.965 532.853,80.001 541,80.001 C549.148,80.001 550.169,79.965 553.369,79.82 C556.562,79.673 558.743,79.167 560.652,78.425 C562.623,77.658 564.297,76.634 565.965,74.965 C567.633,73.296 568.659,71.625 569.425,69.651 C570.167,67.743 570.674,65.562 570.82,62.369 C570.966,59.17 571,58.147 571,50 C571,41.851 570.966,40.831 570.82,37.631"></path></g></g></g></svg></div><div style="padding-top: 8px;"> <div style=" color:#3897f0; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:550; line-height:18px;"> View this post on Instagram</div></div><div style="padding: 12.5% 0;"></div> <div style="display: flex; flex-direction: row; margin-bottom: 14px; align-items: center;"><div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(0px) translateY(7px);"></div> <div style="background-color: #F4F4F4; height: 12.5px; transform: rotate(-45deg) translateX(3px) translateY(1px); width: 12.5px; flex-grow: 0; margin-right: 14px; margin-left: 2px;"></div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(9px) translateY(-18px);"></div></div><div style="margin-left: 8px;"> <div style=" background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 20px; width: 20px;"></div> <div style=" width: 0; height: 0; border-top: 2px solid transparent; border-left: 6px solid #f4f4f4; border-bottom: 2px solid transparent; transform: translateX(16px) translateY(-4px) rotate(30deg)"></div></div><div style="margin-left: auto;"> <div style=" width: 0px; border-top: 8px solid #F4F4F4; border-right: 8px solid transparent; transform: translateY(16px);"></div> <div style=" background-color: #F4F4F4; flex-grow: 0; height: 12px; width: 16px; transform: translateY(-4px);"></div> <div style=" width: 0; height: 0; border-top: 8px solid #F4F4F4; border-left: 8px solid transparent; transform: translateY(-4px) translateX(8px);"></div></div></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center; margin-bottom: 24px;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 224px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 144px;"></div></div></a><p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;"></p></div></blockquote>
+              <script async src="//www.instagram.com/embed.js"></script>
+            </div>
+          {% endif %}
+          <div class="fun_post">
+            <div class="fun-icon-place">
+              <div class="fun-icon">
+                {% if liked %}
+                  <button class="likebutton unlike{{ post.id }}" data-catid="{{ post.id }}"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                    width="27" height="27"
+                    viewBox="0 0 172 172"
+                    style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#800080"><path d="M54.72422,22.93333c-20.726,0 -37.52422,16.79822 -37.52422,37.52422c0,36.07642 41.84746,70.54796 61.39817,85.89922c0.01862,0.01499 0.03728,0.02992 0.05599,0.04479c0.13396,0.10517 0.31608,0.25498 0.44792,0.35833l0.0112,-0.0112c1.98358,1.4988 4.40056,2.31232 6.88672,2.31797c2.48999,-0.00322 4.91127,-0.81686 6.89792,-2.31797v0.0112c0.03859,-0.03025 0.09561,-0.07038 0.13437,-0.10078c0.02948,-0.02312 0.0712,-0.05517 0.10079,-0.07839c0.03755,-0.03335 0.07487,-0.06694 0.11198,-0.10078c19.49011,-15.2961 61.55495,-49.85989 61.55495,-86.02239c0,-20.726 -16.79822,-37.52422 -37.52422,-37.52422c-19.80867,0 -31.27578,17.2 -31.27578,17.2c0,0 -11.46711,-17.2 -31.27578,-17.2z"></path></g></g></svg>
+                  </button>
+                {% else %}
+                  <button class="likebutton like{{ post.id }}" data-catid="{{ post.id }}"><img src="https://img.icons8.com/nolan/27/like.png"/></button>
+                {% endif %}
+                <div class="all_likes all_likes{{ post.id }}" data-catid="{{ post.id }}">{{ likes }} Likes</div>
+              </div>
+
+              <!-- Likes Modal -->
+                <div class="mymodal" id="mymodal{{ post.id }}">
+                  <div class="modal-content">
+                    <span class="close hide-for-mobile" id="close{{ post.id }}">&times;</span>
+                    <h5 class="all_likes{{ post.id }}">{{ likes }} Likes</h5>
+                    <div class="modal-likes">
+                      <a href="{% url 'persona:profile' request.user.id %}" class="user_link i_like_it" id="i_like_it{{ post.id }}">
+                        <div id="user_f">
+                          <img src="{{ request.user.profile.dp.url }}" alt="Profile Picture" height=50px id="dp_img">
+                          <div class="username">
+                            <div class="username_username">
+                              {{ request.user.username }}
+                              {% if request.user.profile.verified %}
+                                <img src="https://img.icons8.com/color/17/000000/verified-account.png" style="margin: 0px; padding: 0px;">
+                              {% endif %}
+                            </div>
+                            <div id="user_name">{{ request.user.first_name }} {{ request.user.last_name }}</div>
+                          </div>
+                        </div>
+                      </a>
+                      {% if liked %}
+                        <a href="{% url 'persona:profile' request.user.id %}" class="user_link" id="i_like_list{{ post.id }}">
+                        <div id="user_f">
+                          <img src="{{ request.user.profile.dp.url }}" alt="Profile Picture" height=50px id="dp_img">
+                          <div class="username">
+                            <div class="username_username">
+                              {{ request.user.username }}
+                              {% if request.user.profile.verified %}
+                                <img src="https://img.icons8.com/color/17/000000/verified-account.png" style="margin: 0px; padding: 0px;">
+                              {% endif %}
+                            </div>
+                            <div class="user_name">{{ request.user.first_name }} {{ request.user.last_name }}</div>
+                          </div>
+                        </div>
+                        </a>
+                      {% endif %}
+                      {% for like in know_post_likes %}
+                        <a href="{% url 'persona:profile' like.user.id %}" class="user_link">
+                        <div id="user_f">
+                          <img src="{{ like.user.profile.dp.url }}" alt="Profile Picture" id="dp_img">
+                          <div class="username">
+                            <div class="username_username">
+                              {{ like.user.username }}
+                              {% if like.user.profile.verified %}
+                                <img src="https://img.icons8.com/color/17/000000/verified-account.png" style="margin: 0px; padding: 0px;">
+                              {% endif %}
+                            </div>
+                            <div class="user_name">{{ like.user.first_name }} {{ like.user.last_name }}</div>
+                          </div>
+                        </div>
+                        </a>
+                      {% endfor %}
+                      {% for like in post_likes %}
+                        <div class="user-all-likes">
+                          <a href="{% url 'persona:profile' like.user.id %}" id="user-two">
+                            <img src="{{ like.user.profile.dp.url }}" alt="Profile Picture" id="dp_img">
+                            <div class="username">
+                              <div class="username_username">
+                                {{ like.user.username }}
+                                {% if like.user.profile.verified %}
+                                  <img src="https://img.icons8.com/color/17/000000/verified-account.png" style="margin: 0px; padding: 0px;">
+                                {% endif %}
+                              </div>
+                              <div class="user_name">{{ like.user.first_name }} {{ like.user.last_name }}</div>
+                            </div>
+                          </a>
+                          <div class="follow" id="like-follow{{ like.user.id }}" data-catid="{{ like.user.id }}">
+                            <button class="follow-btn" id="follow-btn{{ like.user.id }}">Follow</button>
+                          </div>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+
+              <span class="show-comment fun-icon" data-catid="{{ post.id }}">
+                <div class="fun-icon-icon" id="comment-icon"><img src="https://img.icons8.com/ios/23/000000/comments.png"/></div>
+                <div class="fun-icon-txt" id="all-comments{{ post.id }}">{{ comments }} Comments</div>
+              </span>
+
+              <!-- Comment Modal -->
+              <div class="comment-modal" id="comment-modal{{ post.id }}">
+                <div class="comment-modal-content">
+                  <div class="detail-div-1 hide-for-mobile">
+                    {% if post.img %}
+                      <div id="detail-img-post">
+                        <img src="{{ post.img.url }}" id="detail-post-img">
+                      </div>
+                    {% elif post.vid %}
+                      <div id="detail-vid-post">
+                        <h5 id="detail-vid-title">{{ post.title }}</h5>
+                        <video id="detail-post-vid" controls>
+                          <source src="{{ post.vid.url }}">
+                        </video>
+                      </div>
+                    {% elif post.youtube %}
+                      <div id="detail-youtube-post">
+                        <iframe width="100%" height="368" src="https://www.youtube-nocookie.com/embed/{{ post.youtube }}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                      </div>
+                    {% elif post.link %}
+                      <div id="detail-link-post">
+                        <h5 id="detail-link-title">{{ post.title }}</h5>
+                        <a href="{{ post.link }}" id="detail-post-link" target="_blank">{{ post.link }}</a>
+                      </div>
+                    {% elif post.txt %}
+                      <div id="detail-txt-post">
+                        <p id="detail-post-txt">{{ post.txt }}</p>
+                      </div>
+                    {% elif post.aud %}
+                      <div id="detail-aud-post">
+                        <h5 id="detail-aud-title">{{ post.title }}</h5>
+                        <audio controls id="detail-post-aud">
+                          <source src="{{ post.aud.url }}">
+                        </audio>
+                      </div>
+                    {% elif post.insta %}
+                      <div id="detail-insta-post">
+                        <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="{{ post.insta }}" data-instgrm-version="12" style=" background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:95%; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><div style="padding:16px;"> <a href="{{ post.insta }}" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank"> <div style=" display: flex; flex-direction: row; align-items: center;"> <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"></div></div></div><div style="padding: 19% 0;"></div> <div style="display:block; height:50px; margin:0 auto 12px; width:50px;"><svg width="50px" height="50px" viewBox="0 0 60 60" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-511.000000, -20.000000)" fill="#000000"><g><path d="M556.869,30.41 C554.814,30.41 553.148,32.076 553.148,34.131 C553.148,36.186 554.814,37.852 556.869,37.852 C558.924,37.852 560.59,36.186 560.59,34.131 C560.59,32.076 558.924,30.41 556.869,30.41 M541,60.657 C535.114,60.657 530.342,55.887 530.342,50 C530.342,44.114 535.114,39.342 541,39.342 C546.887,39.342 551.658,44.114 551.658,50 C551.658,55.887 546.887,60.657 541,60.657 M541,33.886 C532.1,33.886 524.886,41.1 524.886,50 C524.886,58.899 532.1,66.113 541,66.113 C549.9,66.113 557.115,58.899 557.115,50 C557.115,41.1 549.9,33.886 541,33.886 M565.378,62.101 C565.244,65.022 564.756,66.606 564.346,67.663 C563.803,69.06 563.154,70.057 562.106,71.106 C561.058,72.155 560.06,72.803 558.662,73.347 C557.607,73.757 556.021,74.244 553.102,74.378 C549.944,74.521 548.997,74.552 541,74.552 C533.003,74.552 532.056,74.521 528.898,74.378 C525.979,74.244 524.393,73.757 523.338,73.347 C521.94,72.803 520.942,72.155 519.894,71.106 C518.846,70.057 518.197,69.06 517.654,67.663 C517.244,66.606 516.755,65.022 516.623,62.101 C516.479,58.943 516.448,57.996 516.448,50 C516.448,42.003 516.479,41.056 516.623,37.899 C516.755,34.978 517.244,33.391 517.654,32.338 C518.197,30.938 518.846,29.942 519.894,28.894 C520.942,27.846 521.94,27.196 523.338,26.654 C524.393,26.244 525.979,25.756 528.898,25.623 C532.057,25.479 533.004,25.448 541,25.448 C548.997,25.448 549.943,25.479 553.102,25.623 C556.021,25.756 557.607,26.244 558.662,26.654 C560.06,27.196 561.058,27.846 562.106,28.894 C563.154,29.942 563.803,30.938 564.346,32.338 C564.756,33.391 565.244,34.978 565.378,37.899 C565.522,41.056 565.552,42.003 565.552,50 C565.552,57.996 565.522,58.943 565.378,62.101 M570.82,37.631 C570.674,34.438 570.167,32.258 569.425,30.349 C568.659,28.377 567.633,26.702 565.965,25.035 C564.297,23.368 562.623,22.342 560.652,21.575 C558.743,20.834 556.562,20.326 553.369,20.18 C550.169,20.033 549.148,20 541,20 C532.853,20 531.831,20.033 528.631,20.18 C525.438,20.326 523.257,20.834 521.349,21.575 C519.376,22.342 517.703,23.368 516.035,25.035 C514.368,26.702 513.342,28.377 512.574,30.349 C511.834,32.258 511.326,34.438 511.181,37.631 C511.035,40.831 511,41.851 511,50 C511,58.147 511.035,59.17 511.181,62.369 C511.326,65.562 511.834,67.743 512.574,69.651 C513.342,71.625 514.368,73.296 516.035,74.965 C517.703,76.634 519.376,77.658 521.349,78.425 C523.257,79.167 525.438,79.673 528.631,79.82 C531.831,79.965 532.853,80.001 541,80.001 C549.148,80.001 550.169,79.965 553.369,79.82 C556.562,79.673 558.743,79.167 560.652,78.425 C562.623,77.658 564.297,76.634 565.965,74.965 C567.633,73.296 568.659,71.625 569.425,69.651 C570.167,67.743 570.674,65.562 570.82,62.369 C570.966,59.17 571,58.147 571,50 C571,41.851 570.966,40.831 570.82,37.631"></path></g></g></g></svg></div><div style="padding-top: 8px;"> <div style=" color:#3897f0; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:550; line-height:18px;"> View this post on Instagram</div></div><div style="padding: 12.5% 0;"></div> <div style="display: flex; flex-direction: row; margin-bottom: 14px; align-items: center;"><div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(0px) translateY(7px);"></div> <div style="background-color: #F4F4F4; height: 12.5px; transform: rotate(-45deg) translateX(3px) translateY(1px); width: 12.5px; flex-grow: 0; margin-right: 14px; margin-left: 2px;"></div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(9px) translateY(-18px);"></div></div><div style="margin-left: 8px;"> <div style=" background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 20px; width: 20px;"></div> <div style=" width: 0; height: 0; border-top: 2px solid transparent; border-left: 6px solid #f4f4f4; border-bottom: 2px solid transparent; transform: translateX(16px) translateY(-4px) rotate(30deg)"></div></div><div style="margin-left: auto;"> <div style=" width: 0px; border-top: 8px solid #F4F4F4; border-right: 8px solid transparent; transform: translateY(16px);"></div> <div style=" background-color: #F4F4F4; flex-grow: 0; height: 12px; width: 16px; transform: translateY(-4px);"></div> <div style=" width: 0; height: 0; border-top: 8px solid #F4F4F4; border-left: 8px solid transparent; transform: translateY(-4px) translateX(8px);"></div></div></div></a> </div></blockquote> <script async src="//www.instagram.com/embed.js"></script>
+                      </div>
+                    {% endif %}
+                  </div>
+                  <div class="detail-div-2">
+                    <div class="detail-author-profile hide-for-mobile">
+                      <a href="{% url 'persona:profile' post.author.id %}" class="detail-auth-link">
+                        <div class="detail-auth-p">
+                          <img src="{{ post.author.profile.dp.url }}" class="detail-author-dp">
+                          <strong class="detail-author-username">{{ post.author.username }}</strong>
+                        </div>
+                      </a>
+                      <div class="detail-date-time">
+                        <span>{{ post.date }} <br> {{ post.time }}</span>
+                        <span class="close-comment" id="close-comment{{ post.id }}">&times;</span>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="detail-fun_post hide-for-mobile">
+                        <div class="detail-fun-icon">
+                          {% if liked %}
+                            <button class="likebutton unlike{{ post.id }}" data-catid="{{ post.id }}" style="background-color:#f5f5f5;"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                              width="27" height="27"
+                              viewBox="0 0 172 172"
+                              style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#800080"><path d="M54.72422,22.93333c-20.726,0 -37.52422,16.79822 -37.52422,37.52422c0,36.07642 41.84746,70.54796 61.39817,85.89922c0.01862,0.01499 0.03728,0.02992 0.05599,0.04479c0.13396,0.10517 0.31608,0.25498 0.44792,0.35833l0.0112,-0.0112c1.98358,1.4988 4.40056,2.31232 6.88672,2.31797c2.48999,-0.00322 4.91127,-0.81686 6.89792,-2.31797v0.0112c0.03859,-0.03025 0.09561,-0.07038 0.13437,-0.10078c0.02948,-0.02312 0.0712,-0.05517 0.10079,-0.07839c0.03755,-0.03335 0.07487,-0.06694 0.11198,-0.10078c19.49011,-15.2961 61.55495,-49.85989 61.55495,-86.02239c0,-20.726 -16.79822,-37.52422 -37.52422,-37.52422c-19.80867,0 -31.27578,17.2 -31.27578,17.2c0,0 -11.46711,-17.2 -31.27578,-17.2z"></path></g></g></svg>
+                            </button>
+                          {% else %}
+                            <button class="likebutton like{{ post.id }}" data-catid="{{ post.id }}" style="background-color:#f5f5f5;"><img src="https://img.icons8.com/nolan/27/like.png"/></button>
+                          {% endif %}
+                          <div class="all_likes all_likes{{ post.id }}" data-catid="{{ post.id }}">{{ likes }} Likes</div>
+                        </div>
+                        <div class="open-share detail-fun-icon" data-catid="{{ post.id }}">
+                          <div class="detail-fun-icon-icon"><img src="https://img.icons8.com/ios/25/000000/forward-arrow.png"/></div>
+                          <div class="detail-fun-icon-txt">Share</div>
+                        </div>
+                      </div>
+                    </div>
+                    {% if post.img and post.dst or post.vid and post.dst or post.aud and post.dst or post.youtube and post.dst %}
+                      <div class="detail-post-info" id="detail-post-info{{ post.id }}">
+                        <p>
+                          {{ post.dst|truncatechars_html:75 }}
+                          {% if post.dst|length > 75 %}
+                          <span id="detail-read-more" data-catid="{{ post.id }}">read more</span>
+                          {% endif %}
+                        </p>
+                      </div>
+                      <div class="detail-post-info-full" id="detail-post-info-full{{ post.id }}">
+                        <p>{{ post.dst|striptags|linebreaksbr }}</p>
+                        <div id="detail-read-less" data-catid="{{ post.id }}">read less</div>
+                      </div>
+                    {% endif %}
+                    <h5 class="no_comment" id="no_comment{{ post.id }}">{{ comments }} Comments</h5>
+                    {% if post.img and post.dst or post.vid and post.dst or post.aud and post.dst or post.youtube and post.dst %}
+                    <div class="detail-all_comments detail-all_comments{{ post.id }}">
+                    {% else %}
+                    <div class="detail-all_comments detail-all_comments{{ post.id }}" id="c-id">
+                    {% endif %}
+                      {% for c in post_comments %}
+                        <div class="comment" id="comment{{ c.id }}">
+                          <img src="{{ c.user.profile.dp.url }}" id='c-user-dp'>
+                          <div id="c-user-txt">
+                            <div id="c-user">
+                              <a href="{% url 'persona:profile' c.user.id %}" id="c-username-link">
+                                <strong>{{ c.user.username }}</strong>
+                              </a>
+                              <div id="c-date-time">{{ c.date_time }}</div>
+                            </div>
+                            {% if c.user == request.user %}
+                            <div id="c-txt-d">
+                              <p>{{ c.comment }}</p>
+                              <button id="c-delete" class="c-delete" data-catid="{{ c.id }}" data-catid-post="{{ post.id }}">Delete</button>
+                            </div>
+                            {% else %}
+                            <div id="c-txt">
+                              <p>{{ c.comment }}</p>
+                            </div>
+                            {% endif %}
+                          </div>
+                        </div>
+                      {% endfor %}
+                    </div>
+                    <form class="comment-div" id="comment-div{{ post.id }}" data-catid="{{ post.id }}">
+                      <input type="text" name="comment_txt" class="comment-input" id="comment-input{{ post.id }}">
+                      <button type="submit" id="comment-submit" data-catid="{{ post.id }}">Comment</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <div class="open-share fun-icon" data-catid="{{ post.id }}">
+                <div class="fun-icon-icon"><img src="https://img.icons8.com/ios/25/000000/forward-arrow.png"/></div>
+                <div class="fun-icon-txt hide-for-mobile">Share</div>
+              </div>
+
+              <!-- Share Modal -->
+              <div class="share-modal" id="share-modal{{ post.id }}">
+                <div class="share-modal-content">
+                  <span class="share-close" id="share-close{{ post.id }}">&times;</span>
+                  <h5>Share</h5>
+                  <div class="shareit">
+                    <div class="share-social">
+                      <a href="https://twitter.com/intent/tweet?text=http://127.0.0.1:8000/detail/{{ post.id }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                        width="50" height="50"
+                        viewBox="0 0 172 172"
+                        style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="#343434"></path><g fill="#03a9f4"><path d="M150.5,44.53725c-4.74075,2.09983 -9.83983,3.50092 -15.21842,4.16383c5.46817,-3.2465 9.675,-8.42442 11.64942,-14.54117c-5.117,2.99925 -10.78583,5.203 -16.81658,6.364c-4.816,-5.10625 -11.68525,-8.27392 -19.29625,-8.27392c-14.62,0 -26.47008,11.74617 -26.47008,26.23c0,2.04967 0.24008,4.04558 0.69158,5.98417c-21.9945,-1.10367 -41.50217,-11.55983 -54.55267,-27.42683c-2.29333,3.87717 -3.58333,8.41725 -3.58333,13.20817c0,9.10525 4.66192,17.12117 11.77125,21.844c-4.33942,-0.13258 -8.42442,-1.34017 -12.00058,-3.27517c0,0.07883 0,0.19708 0,0.30817c0,12.72442 9.12675,23.32033 21.22408,25.73192c-2.21092,0.60558 -4.54725,0.94242 -6.95525,0.94242c-1.70925,0 -3.3755,-0.1935 -4.988,-0.48375c3.36833,10.39883 13.14008,17.99908 24.71783,18.22483c-9.05867,7.02333 -20.468,11.23017 -32.8735,11.23017c-2.14283,0 -4.23908,-0.12183 -6.31025,-0.37267c11.72108,7.42108 25.63875,11.77125 40.57767,11.77125c48.67958,0 75.31092,-39.97567 75.31092,-74.65517c0,-1.13592 -0.03583,-2.26825 -0.08958,-3.38625c5.19583,-3.66933 9.675,-8.299 13.21175,-13.588"></path></g></g></svg>
+                      </a>
+                      <a href="https://www.facebook.com/sharer/sharer.php?u=http://127.0.0.1:8000/detail/{{ post.id }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                        width="50" height="50"
+                        viewBox="0 0 172 172"
+                        style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="#343434"></path><g><path d="M80.66442,10.64967c-10.9865,0.559 -20.85858,2.68392 -29.98892,9.01925c-23.66075,16.41883 -36.13433,44.419 -38.07292,72.53742c-0.46225,6.6865 -0.35475,13.52708 1.69133,19.909c2.45458,7.65758 7.55725,14.20075 13.23683,19.89108c10.48125,10.50275 23.435,18.75158 37.7755,22.56425c18.55092,4.93067 41.753,5.246 57.81708,-5.26392c18.31442,-11.98625 32.88425,-31.61933 38.32375,-52.82192c2.89892,-11.29825 -1.0105,-33.67617 -6.19558,-44.12517c-7.23833,-14.58775 -13.26908,-21.70067 -26.58475,-29.23642c-14.61283,-8.26675 -31.44375,-11.32692 -48.00233,-12.47358" fill="#4b7bb2"></path><path d="M98.76742,156.26558c-1.15025,-3.29308 -0.52675,-8.213 -0.62708,-11.73183c-0.12183,-4.2355 -0.18633,-8.47458 -0.1935,-12.71367c-0.01075,-5.19583 0.0645,-10.38808 0.22217,-15.58033c0.07883,-2.59433 0.22933,-5.18867 0.30458,-7.783c0.05733,-2.00308 -0.16842,-2.78783 2.03533,-2.87742c4.54008,-0.18275 9.116,-0.25083 13.68475,-0.27233c0.22575,0 0.46583,-0.00717 0.645,-0.13975c0.20783,-0.15408 0.2795,-0.43 0.32608,-0.68442c0.37267,-2.021 0.22933,-4.09575 0.25083,-6.149c0.043,-4.45767 0.87792,-8.90458 2.44742,-13.072c-5.10267,-0.38342 -10.234,-0.37625 -15.33667,0.01433c-1.14308,0.086 -2.49758,0.44792 -3.6335,0.34758c-1.45483,-0.129 -1.38675,-0.02867 -1.70925,-1.56592c-0.50883,-2.41517 -0.46225,-5.074 -0.55542,-7.53217c-0.11467,-3.02433 0.25083,-6.192 1.892,-8.73975c1.53367,-2.37933 4.04917,-3.99183 6.71158,-4.94858c3.95958,-1.42617 8.41367,-1.99233 12.5775,-1.93858c0.1075,-3.08883 0.2365,-6.17408 0.39058,-9.25933c0.10392,-2.09267 1.25775,-5.90175 -0.76325,-7.19892c-1.0105,-0.64858 -2.60867,-0.903 -3.76608,-1.1825c-2.67675,-0.64142 -5.4395,-0.89225 -8.18792,-0.84208c-5.46817,0.10033 -10.88975,1.37958 -15.97808,3.354c-3.54392,1.37242 -7.10217,3.17483 -9.36683,6.22783c-1.63758,2.20733 -2.46892,4.902 -3.11033,7.57517c-1.04275,4.33942 -1.65908,8.77917 -1.84542,13.23683c-0.09317,2.22883 -0.07883,4.46125 0.043,6.69008c0.07883,1.43333 0.99975,4.42542 -0.36192,5.51117c-1.00692,0.80625 -4.20683,0.58408 -5.4825,0.70592c-4.15667,0.40492 -8.33483,0.63067 -12.513,0.67008c0.80983,6.63275 1.61967,13.26192 2.4295,19.89467c3.30025,0.172 6.60408,0.29742 9.90792,0.37983c1.69492,0.043 4.37167,-0.55542 5.45025,1.02483c1.51575,2.21092 0.14692,6.46433 0.09675,8.94042c-0.08242,4.33225 -0.13258,8.66092 -0.10033,12.99317c0.0645,8.514 0.19708,18.72292 1.28283,27.16883" fill="#d6e5e5"></path><path d="M75.94158,158.57683c-0.88508,0 -1.65908,-0.65933 -1.77375,-1.56592c-1.07142,-8.32767 -1.22908,-18.09583 -1.29717,-27.38383c-0.03583,-4.34658 0.01792,-8.69675 0.09675,-13.04692c0.01792,-0.78475 0.14692,-1.73075 0.29383,-2.74125c0.25083,-1.75225 0.602,-4.15667 -0.07525,-5.15283c-0.28308,-0.40133 -1.76658,-0.32608 -2.65167,-0.28308c-0.48375,0.02508 -0.93883,0.03942 -1.36883,0.03942c-3.31817,-0.07883 -6.63992,-0.20783 -9.9545,-0.37983c-0.86717,-0.04658 -1.57667,-0.70592 -1.68417,-1.5695l-2.4295,-19.89467c-0.0645,-0.50883 0.09317,-1.01408 0.43,-1.40108c0.33683,-0.37983 0.82058,-0.60558 1.32942,-0.60917c4.09933,-0.03942 8.256,-0.258 12.35175,-0.66292c0.37267,-0.03583 0.89583,-0.05017 1.4835,-0.06092c0.79192,-0.01433 2.63733,-0.05017 3.11033,-0.301c0.1505,-0.31533 -0.08958,-1.90992 -0.19708,-2.59075c-0.07883,-0.52317 -0.14692,-1.00333 -0.16842,-1.38675c-0.12542,-2.279 -0.13975,-4.58667 -0.04658,-6.86567c0.1935,-4.558 0.82775,-9.13033 1.892,-13.57725c0.64142,-2.65525 1.54442,-5.70467 3.41492,-8.22733c2.66958,-3.59767 6.82983,-5.53983 10.15875,-6.82983c5.6975,-2.20733 11.27675,-3.3755 16.59083,-3.47583c3.01717,-0.043 5.93042,0.24725 8.63942,0.89583l0.645,0.14692c1.14667,0.25083 2.57642,0.56617 3.66933,1.2685c2.53342,1.62683 2.06042,5.06683 1.74867,7.34225c-0.07525,0.53392 -0.14692,1.03558 -0.16842,1.45842c-0.14692,3.0745 -0.27592,6.15258 -0.38342,9.23067c-0.03583,0.9675 -0.82775,1.72717 -1.79167,1.72717c-0.17558,0.00358 -0.36192,-0.00358 -0.5375,-0.00358c-4.1495,0 -8.09117,0.63425 -11.42725,1.83825c-1.83467,0.65933 -4.33225,1.92783 -5.81575,4.23192c-1.20758,1.87767 -1.73075,4.39675 -1.60533,7.697l0.04658,1.57667c0.05017,1.91708 0.10033,3.89867 0.473,5.65092c0.01075,0.05017 0.0215,0.09675 0.02867,0.13975c0.69158,0.03583 1.36167,-0.05733 2.00308,-0.15408c0.48733,-0.07525 0.97108,-0.14692 1.419,-0.18275c5.19225,-0.39417 10.44542,-0.40133 15.609,-0.01433c0.559,0.04658 1.07142,0.35117 1.376,0.82417c0.301,0.47658 0.3655,1.06783 0.16483,1.59458c-1.505,3.99183 -2.29333,8.18075 -2.33275,12.45567l0.00358,1.462c0.01433,1.61967 0.03225,3.29308 -0.2795,4.99517c-0.07167,0.34758 -0.2365,1.21475 -1.01767,1.79525c-0.67725,0.49808 -1.40825,0.49808 -1.71642,0.49808c-5.27108,0.02508 -9.59975,0.11108 -13.61308,0.27233c-0.11825,0.00358 -0.215,0.01075 -0.29383,0.01792c-0.00717,0.172 -0.01075,0.37267 -0.01433,0.54467l-0.01433,0.58408c-0.03942,1.3975 -0.09675,2.795 -0.16125,4.1925c-0.05375,1.20042 -0.10392,2.39725 -0.13975,3.59767c-0.16125,5.11342 -0.23292,10.33792 -0.22575,15.523c0.00717,4.22475 0.07525,8.44233 0.19708,12.65992c0.02867,1.02842 -0.00358,2.1715 -0.03583,3.36117c-0.07525,2.71258 -0.15767,5.7835 0.559,7.83675c0.32967,0.93525 -0.16483,1.9565 -1.10008,2.28258c-0.93525,0.33325 -1.96008,-0.16483 -2.28258,-1.10008c-0.93525,-2.66958 -0.84208,-6.09525 -0.75967,-9.116c0.02867,-1.118 0.06092,-2.18942 0.03225,-3.1605c-0.12183,-4.24983 -0.18992,-8.50325 -0.19708,-12.75667c-0.01075,-5.2245 0.06808,-10.48842 0.22575,-15.64125c0.03942,-1.21475 0.08958,-2.4295 0.14333,-3.64425c0.06092,-1.376 0.12183,-2.75558 0.15767,-4.13158l0.01075,-0.52317c0.02508,-1.5695 0.06092,-3.94883 3.74817,-4.09575c3.88075,-0.15408 8.04817,-0.24008 13.06483,-0.26875c0.1505,-1.19683 0.13617,-2.408 0.12542,-3.67292l-0.00358,-1.53008c0.03942,-3.8915 0.64142,-7.7185 1.7845,-11.4165c-4.22833,-0.215 -8.50325,-0.15767 -12.74592,0.16125c-0.36908,0.03225 -0.75967,0.08958 -1.15742,0.1505c-0.85283,0.13258 -1.8275,0.27592 -2.7735,0.1935c-2.34708,-0.20067 -2.86667,-0.91733 -3.268,-2.84517c-0.46583,-2.20375 -0.52317,-4.35375 -0.57692,-6.43208l-0.04658,-1.53367c-0.15408,-4.06708 0.559,-7.26342 2.17867,-9.77892c2.02458,-3.14617 5.25675,-4.81958 7.611,-5.66525c3.397,-1.2255 7.32792,-1.91708 11.45233,-2.02817c0.09317,-2.52267 0.20425,-5.04533 0.32967,-7.568c0.02508,-0.516 0.10392,-1.12158 0.1935,-1.77017c0.15408,-1.118 0.473,-3.44717 -0.13258,-3.83417c-0.55183,-0.35833 -1.634,-0.59483 -2.50475,-0.78475l-0.70592,-0.16125c-2.41875,-0.5805 -5.00592,-0.84208 -7.74,-0.79908c-4.88767,0.08958 -10.05842,1.17892 -15.36175,3.22858c-2.87742,1.118 -6.45358,2.76633 -8.5785,5.62583c-1.4835,1.9995 -2.22525,4.51142 -2.80575,6.93017c-1.0105,4.22117 -1.61608,8.56058 -1.79525,12.89283c-0.09317,2.16433 -0.07883,4.35733 0.03942,6.51808c0.01792,0.28667 0.07525,0.64858 0.13617,1.04275c0.26875,1.7845 0.68083,4.48275 -1.16458,5.96625c-1.12875,0.89942 -2.95625,1.00333 -5.22808,1.04633c-0.47658,0.01075 -0.89583,0.01433 -1.20042,0.04658c-3.53675,0.344 -7.11292,0.559 -10.66758,0.645l2.00667,16.41883c2.78067,0.13258 5.5685,0.23292 8.35275,0.301c0.344,0.01433 0.70592,-0.01075 1.10008,-0.03225c1.73433,-0.09675 4.37883,-0.22575 5.79067,1.83825c1.46558,2.14642 1.02125,5.21733 0.6665,7.68983c-0.12183,0.84567 -0.24008,1.63758 -0.25442,2.29692c-0.07883,4.31433 -0.13258,8.62867 -0.09675,12.94658c0.06808,9.1805 0.22217,18.82325 1.2685,26.95383c0.12542,0.97825 -0.56617,1.87767 -1.55158,2.00667c-0.07883,0.00717 -0.15408,0.01075 -0.23292,0.01075z" fill="#010101"></path><path d="M89.96317,159.89908c-8.05533,0 -16.58008,-1.12158 -25.17292,-3.40417c-13.92125,-3.70517 -27.29067,-11.68167 -38.66775,-23.08383c-7.13083,-7.15233 -11.49175,-13.72417 -13.72417,-20.69017c-2.33633,-7.2885 -2.17867,-14.86367 -1.77733,-20.64717c2.16792,-31.39 16.35433,-58.37608 38.92575,-74.03525c8.38142,-5.81575 17.94892,-8.7075 31.0245,-9.374c0.08242,-0.00717 0.15767,-0.00358 0.2365,0.00358c20.48592,1.42258 36.00533,5.46458 48.83725,12.72442c13.27625,7.51067 19.6725,14.53758 27.38742,30.08208c5.37858,10.84317 9.40625,33.5615 6.33892,45.50475c-5.47892,21.34233 -20.11683,41.53083 -39.16225,53.99008c-9.01567,5.90175 -21.01267,8.92967 -34.24592,8.92967zM80.6465,12.642c-12.22633,0.63783 -21.12733,3.311 -28.83867,8.66092c-21.57167,14.96758 -35.14175,40.86433 -37.22367,71.03958c-0.559,8.06967 -0.0645,13.97858 1.59817,19.16367c2.03175,6.33892 6.0845,12.40908 12.7495,19.092c10.879,10.90767 23.63567,18.52942 36.87967,22.05183c21.61825,5.74767 42.63808,3.87358 56.21892,-5.00592c18.232,-11.93608 32.24642,-31.24308 37.48525,-51.65375c2.78425,-10.84317 -1.00333,-32.56892 -6.05225,-42.75275c-7.29567,-14.70242 -13.31925,-21.33875 -25.78208,-28.38717c-12.27292,-6.9445 -27.219,-10.82525 -47.03483,-12.20842z" fill="#010101"></path></g></g></svg>
+                      </a>
+                      <a href="whatsapp://send?text=The text to share!" data-action="share/whatsapp/share">
+                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                        width="50" height="50"
+                        viewBox="0 0 172 172"
+                        style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="#343434"></path><g><path d="M11.56342,160.87017c0.258,-0.50525 0.24008,-3.32175 0.39417,-3.88075c0.30458,-1.0965 0.72742,-2.17867 1.11442,-3.24292c0.37267,-1.02842 0.74533,-1.97442 0.99258,-3.03508c0.26517,-1.14667 0.74892,-2.14283 1.12517,-3.2465c0.32967,-0.96392 0.688,-1.88125 0.88867,-2.881c0.08958,-0.44792 0.39775,-0.83133 0.46583,-1.27208c0.07167,-0.46225 0.07883,-0.93525 0.16483,-1.40825c0.16125,-0.89583 0.30817,-1.77733 0.49092,-2.68392c0.17917,-0.91017 0.59483,-1.76658 0.73458,-2.68392c0.24008,-1.56233 0.60917,-3.11033 0.92808,-4.6655c0.344,-1.66267 0.54108,-3.28592 0.8815,-4.95933c0.55183,-2.69467 -0.56617,-3.78042 -1.37958,-6.235c-0.89225,-2.69108 -1.6985,-5.41083 -2.41517,-8.15567c-1.43333,-5.49683 -2.50475,-11.094 -3.11392,-16.74133c-1.20042,-11.11192 -0.61275,-22.5105 2.67317,-33.23542c0.85283,-2.78067 1.88125,-5.50758 3.09242,-8.15208c5.34992,-11.696 14.11833,-21.60392 24.21975,-29.56967c8.59642,-6.77967 18.40758,-12.32667 29.14683,-14.45517c11.81425,-2.33992 24.13017,-0.41925 35.57892,3.32175c14.12192,4.61533 27.55225,12.17975 37.31325,23.38125c7.87975,9.04433 13.15442,20.25658 15.55525,32.00992c5.7405,28.1005 -6.12392,59.03183 -29.17908,76.0885c-16.09992,11.911 -37.05525,16.61233 -56.78508,13.72417c-5.3535,-0.78475 -10.63175,-2.1285 -15.695,-4.042c-2.55133,-0.96392 -5.02025,-2.09267 -7.45692,-3.31817c-2.70183,-1.36167 -4.54725,-0.02508 -7.36017,0.67008c-3.41492,0.84208 -6.69008,2.11058 -10.12292,3.096c-0.77758,0.22217 -1.51933,0.54467 -2.322,0.75967c-0.51958,0.13975 -1.15025,0.22217 -1.65192,0.40492c-0.4085,0.1505 -0.65575,0.35475 -1.10725,0.42283c-1.69133,0.25083 -3.33967,0.86 -5.02383,1.22192c-1.81317,0.39058 -3.526,1.09292 -5.37142,1.33658c-1.10008,0.14692 -2.37933,0.26875 -3.44,0.58408c-0.63067,0.18633 -1.247,0.41208 -1.89558,0.54108c-0.37983,0.07883 -1.10725,0.07525 -1.4405,0.301c0.05017,-0.00358 0.46942,-0.00717 0.52317,-0.01433" fill="#d6e5e5"></path><path d="M11.56342,162.66183c-0.27592,0 -0.55542,-0.0645 -0.82058,-0.19708c-0.82417,-0.42642 -1.1825,-1.40467 -0.84925,-2.24675c0.07883,-0.37625 0.10033,-1.0965 0.13975,-1.74867c0.05375,-1.00692 0.086,-1.548 0.20067,-1.95292c0.258,-0.93883 0.59842,-1.86333 0.93525,-2.7735l0.4085,-1.11442c0.2795,-0.77042 0.55542,-1.505 0.74175,-2.31483c0.19708,-0.8385 0.48733,-1.60175 0.78833,-2.37575c0.13258,-0.344 0.26875,-0.69158 0.39058,-1.04992l0.20425,-0.58408c0.2365,-0.68442 0.48017,-1.35092 0.6235,-2.07117c0.086,-0.42642 0.24725,-0.76683 0.3655,-1.01767c0.11467,-0.35475 0.13258,-0.53392 0.14692,-0.71308c0.02867,-0.301 0.06092,-0.602 0.11108,-0.90658l0.49808,-2.71617c0.09675,-0.4945 0.24725,-0.9675 0.40133,-1.4405c0.12542,-0.387 0.258,-0.77042 0.3225,-1.17175c0.17558,-1.15742 0.41925,-2.30767 0.67008,-3.45433l0.27233,-1.30075c0.16842,-0.81342 0.301,-1.61608 0.43358,-2.42233c0.13975,-0.8385 0.27592,-1.68058 0.4515,-2.537c0.28667,-1.40108 -0.01792,-2.10342 -0.56975,-3.38625c-0.24725,-0.57692 -0.516,-1.19325 -0.75608,-1.92783c-0.89583,-2.70183 -1.71642,-5.4825 -2.44742,-8.26317c-1.505,-5.75842 -2.56925,-11.481 -3.16408,-17.00292c-1.32583,-12.26575 -0.40133,-23.68942 2.74125,-33.95567c0.88867,-2.88458 1.9565,-5.70108 3.17842,-8.37067c5.08833,-11.12267 13.40883,-21.29575 24.73575,-30.229c9.97958,-7.869 20.04517,-12.84983 29.9065,-14.80275c10.80375,-2.14283 23.07308,-1.00692 36.4855,3.3755c15.8025,5.16358 28.982,13.43033 38.10875,23.90442c7.90842,9.07658 13.42675,20.42858 15.96017,32.8305c5.91967,28.99275 -6.08092,60.29317 -29.86708,77.88733c-16.18233,11.97192 -37.35625,17.08892 -58.11092,14.05742c-5.53983,-0.80983 -10.94708,-2.20375 -16.06767,-4.13875c-2.39367,-0.903 -4.89125,-2.01742 -7.62892,-3.39342c-1.32942,-0.67008 -2.20733,-0.42283 -4.07783,0.19708c-0.64142,0.21142 -1.3115,0.43358 -2.04967,0.61275c-1.9565,0.48375 -3.86642,1.11083 -5.78708,1.7415c-1.41183,0.46225 -2.82367,0.9245 -4.26417,1.34017c-0.32608,0.09317 -0.64142,0.20783 -0.96392,0.31892c-0.45508,0.16125 -0.91733,0.3225 -1.3975,0.44792c-0.22933,0.0645 -0.48375,0.11467 -0.73817,0.16842c-0.26158,0.05375 -0.53033,0.10392 -0.76325,0.18633c-0.49808,0.23292 -0.89583,0.42642 -1.44767,0.50883c-0.93883,0.13975 -1.85258,0.39775 -2.76275,0.65217c-0.71308,0.19708 -1.42975,0.39417 -2.15358,0.55183c-0.69875,0.1505 -1.38317,0.35117 -2.064,0.54825c-1.09292,0.31892 -2.22167,0.64858 -3.45075,0.81342l-0.60558,0.07883c-0.85283,0.1075 -1.77375,0.215 -2.56208,0.44792l-0.52317,0.16125c-0.50525,0.15767 -1.0105,0.31533 -1.53367,0.41925c-0.09317,0.01792 -0.20783,0.03583 -0.3225,0.05017c-0.22575,0.13975 -0.48375,0.23292 -0.76683,0.26158c-0.06092,0.00717 -0.41925,0.01433 -0.48733,0.01433c-0.07525,0 -0.15408,0.00358 -0.21858,0.00358zM82.68183,11.14417c-3.60125,0 -7.06275,0.32608 -10.36658,0.98183c-9.30233,1.84542 -18.85192,6.58975 -28.38358,14.104c-10.87542,8.5785 -18.84833,18.30725 -23.69658,28.90675c-1.15742,2.52983 -2.1715,5.19942 -3.01358,7.9335c-2.99925,9.79325 -3.87717,20.73675 -2.60508,32.51875c0.57692,5.34992 1.60892,10.89692 3.06375,16.48333c0.7095,2.70542 1.51217,5.41083 2.38292,8.04458c0.20783,0.61992 0.43358,1.14667 0.645,1.634c0.64142,1.48708 1.30433,3.02075 0.7955,5.5255c-0.16842,0.80983 -0.29742,1.60892 -0.43,2.40083c-0.13975,0.84925 -0.2795,1.70208 -0.45867,2.56208l-0.2795,1.333c-0.22933,1.07858 -0.46583,2.15717 -0.63067,3.23933c-0.08958,0.59483 -0.26875,1.17175 -0.45867,1.74508c-0.1075,0.34042 -0.22575,0.67725 -0.29383,1.02483l-0.48375,2.65883c-0.03583,0.18992 -0.05375,0.39058 -0.07167,0.59483c-0.02508,0.26158 -0.05017,0.51958 -0.086,0.774c-0.07525,0.473 -0.25083,0.85642 -0.38342,1.13592c-0.27233,1.08933 -0.55542,1.90992 -0.84925,2.74842l-0.1935,0.559c-0.13975,0.4085 -0.29383,0.80267 -0.44433,1.18967c-0.2365,0.61275 -0.48017,1.21833 -0.63425,1.88125c-0.22217,0.96033 -0.53392,1.83108 -0.87075,2.74125l-0.4085,1.12517c-0.30458,0.82058 -0.61275,1.64475 -0.84567,2.48683c-0.02508,0.16842 -0.043,0.602 -0.06808,1.08575c0.0645,-0.0215 0.12542,-0.03942 0.1935,-0.06092l0.58408,-0.17917c1.01408,-0.29742 2.13925,-0.44075 3.12825,-0.56617l0.5805,-0.07525c0.96033,-0.129 1.90992,-0.40492 2.91683,-0.69875c0.76325,-0.22217 1.53008,-0.44433 2.31483,-0.61275c0.65575,-0.14333 1.30075,-0.3225 1.94933,-0.50167c1.06067,-0.29383 2.11775,-0.5805 3.19275,-0.74175c0.3655,-0.172 0.54467,-0.25442 0.75608,-0.33325c0.37983,-0.13975 0.82058,-0.2365 1.25775,-0.32967l0.54108,-0.12183c0.39058,-0.10392 0.76325,-0.2365 1.13233,-0.36908c0.38342,-0.13617 0.76683,-0.26875 1.15742,-0.38342c1.40467,-0.40133 2.7735,-0.85283 4.14233,-1.30075c2.01025,-0.65933 4.00258,-1.30792 6.04867,-1.81317c0.645,-0.15767 1.22908,-0.35475 1.7845,-0.5375c1.92425,-0.63783 4.11008,-1.3545 6.80833,0.00717c2.62658,1.32225 5.0095,2.38292 7.28492,3.24292c4.8805,1.84542 10.03692,3.17483 15.31875,3.94883c19.81942,2.9025 40.03658,-1.978 55.45925,-13.39092c22.33133,-16.52275 34.04883,-47.07067 28.4875,-74.28967c-2.408,-11.79633 -7.64683,-22.58217 -15.15033,-31.19292c-8.70392,-9.99033 -21.33158,-17.89158 -36.51775,-22.8545c-8.65733,-2.84158 -16.7915,-4.26417 -24.30217,-4.26417z" fill="#010101"></path><path d="M34.72967,121.1525c-0.02508,-1.99233 -1.0965,-3.95242 -1.92425,-5.68675c-2.63017,-5.48967 -4.08858,-11.45233 -5.53267,-17.36483c-1.12517,-4.61892 -2.2575,-9.2665 -2.59433,-14.00725c-1.16458,-16.50125 7.49275,-32.35033 18.877,-44.3545c2.752,-2.89892 5.70825,-5.66525 9.18767,-7.6325c3.655,-2.064 7.75792,-3.17842 11.81067,-4.27133c8.94042,-2.41158 18.03133,-4.84108 27.29067,-4.65833c3.19992,0.0645 6.45,0.45508 9.37758,1.74867c2.30767,1.02125 4.33583,2.56567 6.46075,3.93092c3.483,2.236 7.2455,3.999 10.78583,6.14542c6.8155,4.13158 12.41983,9.6105 17.16417,15.97092c0.95675,1.27925 2.21092,2.0855 3.19275,3.31458c1.25775,1.58025 2.15717,3.55467 2.89533,5.418c1.50858,3.827 2.2575,7.90842 2.93833,11.94683c1.08933,6.45717 2.18225,12.99675 1.6555,19.52558c-0.3225,4.01333 -1.25417,7.95142 -2.3435,11.825c-1.55875,5.53267 -3.46508,11.01158 -6.37475,15.96733c-4.601,7.84033 -11.60283,14.12908 -19.522,18.59392c-7.91917,4.46483 -16.74133,7.17383 -25.69608,8.74692c-2.92758,0.516 -5.88383,0.91375 -8.858,0.98183c-6.39625,0.14333 -12.72083,-1.26133 -18.74083,-3.33608c-2.63375,-0.90658 -5.25317,-1.92067 -7.84392,-2.9455c-1.12517,-0.44433 -2.26108,-0.93883 -3.23575,-1.66983c-0.21858,-0.16483 -3.07092,-2.40083 -2.79858,-2.46533c-8.041,1.99233 -15.31875,4.26058 -23.09458,7.12008c0,-2.20017 1.60892,-5.22092 2.26108,-7.33867c0.79192,-2.56925 1.58383,-5.1385 2.37575,-7.70417c0.68083,-2.20733 1.82033,-4.59383 2.21092,-6.837c0.05733,-0.31892 0.07883,-0.645 0.07525,-0.96392z" fill="#38b47b"></path><path d="M82.62092,149.09892c-5.65808,0 -11.69958,-1.12875 -18.42192,-3.44358c-2.65883,-0.91733 -5.30333,-1.93858 -7.91917,-2.97417c-1.14308,-0.45508 -2.46533,-1.01408 -3.65142,-1.89917c-1.06425,-0.7955 -1.82033,-1.40825 -2.35425,-1.89558c-7.32433,1.85258 -14.2975,4.02408 -21.84758,6.794c-0.55542,0.20425 -1.16458,0.12183 -1.64475,-0.21142c-0.48017,-0.33683 -0.76683,-0.88508 -0.76683,-1.46917c0,-1.84183 0.82417,-3.92017 1.55875,-5.75483c0.29742,-0.7525 0.58767,-1.47633 0.78475,-2.11058l2.37575,-7.70417c0.25442,-0.83133 0.56975,-1.68417 0.89225,-2.54775c0.51242,-1.376 1.04275,-2.79858 1.26492,-4.06708c0.03583,-0.215 0.05375,-0.43 0.05017,-0.64142c-0.01792,-1.37242 -0.75608,-2.88817 -1.46558,-4.35017l-0.28308,-0.58408c-2.72333,-5.676 -4.214,-11.79633 -5.6545,-17.70883c-1.12517,-4.61892 -2.29333,-9.3955 -2.64092,-14.30825c-1.44408,-20.48592 11.51325,-37.43508 19.36792,-45.71258c2.5585,-2.69825 5.70108,-5.75125 9.60692,-7.95858c3.86642,-2.18583 8.11625,-3.3325 12.22633,-4.43975c8.94758,-2.41158 18.21767,-4.91992 27.79233,-4.71925c4.11367,0.07883 7.31358,0.68083 10.06558,1.90275c1.85975,0.82058 3.51167,1.93142 5.11342,3.00283c0.52675,0.35833 1.06067,0.71308 1.59458,1.0535c1.8705,1.204 3.8915,2.3005 5.84442,3.36117c1.64833,0.89583 3.29667,1.79167 4.89842,2.76275c6.64708,4.03125 12.43058,9.40625 17.673,16.42958c0.43717,0.58408 0.94958,1.04633 1.45483,1.51217c0.59125,0.54825 1.17892,1.10008 1.70567,1.75583c1.4835,1.86692 2.46892,4.12083 3.1605,5.88025c1.55875,3.94883 2.32558,8.07325 3.03867,12.30517c1.09292,6.4715 2.22525,13.16517 1.677,19.96633c-0.36192,4.49708 -1.47275,8.86517 -2.40442,12.169c-1.9565,6.9445 -3.97392,11.997 -6.5575,16.39017c-4.51142,7.68625 -11.48817,14.3405 -20.18492,19.24967c-7.40675,4.17817 -16.24325,7.18817 -26.26583,8.95117c-3.57258,0.62708 -6.47508,0.94958 -9.13033,1.00692c-0.3225,0.00358 -0.63425,0.00717 -0.95317,0.00717zM52.47433,136.01258c0.52317,0.49092 1.96367,1.64117 2.30408,1.89917c0.83492,0.6235 1.89558,1.06783 2.82725,1.43692c2.56567,1.01767 5.15283,2.01742 7.76508,2.91683c6.6865,2.30408 12.57033,3.38983 18.12092,3.23933c2.50117,-0.05733 5.15283,-0.35117 8.58567,-0.95317c9.62483,-1.69492 18.07433,-4.56875 25.12992,-8.54267c8.14133,-4.59383 14.66658,-10.80017 18.8555,-17.94175c2.41875,-4.11725 4.32867,-8.91175 6.19558,-15.5445c0.88867,-3.14617 1.94933,-7.29567 2.28617,-11.48458c0.51242,-6.36042 -0.58408,-12.82833 -1.64117,-19.08483c-0.67725,-4.03842 -1.40825,-7.96217 -2.83442,-11.58492c-0.602,-1.5265 -1.44408,-3.47225 -2.63017,-4.95933c-0.40492,-0.50883 -0.87075,-0.93167 -1.333,-1.35808c-0.60558,-0.559 -1.29358,-1.19325 -1.892,-2.00308c-4.9665,-6.64708 -10.41317,-11.72108 -16.65892,-15.50867c-1.55517,-0.94242 -3.15333,-1.80958 -4.7515,-2.68033c-2.01025,-1.08933 -4.08858,-2.21808 -6.07017,-3.49375c-0.55183,-0.35833 -1.10725,-0.72742 -1.6555,-1.0965c-1.53725,-1.03558 -2.99208,-2.01025 -4.56158,-2.70183c-2.30408,-1.02125 -5.06325,-1.5265 -8.686,-1.59458c-9.07658,-0.21142 -18.08867,2.25033 -26.79258,4.59742c-3.89508,1.04992 -7.91917,2.13567 -11.395,4.09933c-3.49733,1.97442 -6.39267,4.80167 -8.772,7.30642c-7.44617,7.85108 -19.74058,23.87575 -18.38967,42.99642c0.32608,4.60817 1.45483,9.23425 2.54417,13.70983c1.40108,5.7405 2.84875,11.67092 5.41083,17.01367l0.26875,0.56258c0.84567,1.73433 1.80242,3.698 1.83108,5.87667c0,0 0,0 0,0.00358c0.00358,0.43 -0.02867,0.86358 -0.10392,1.29358c-0.27233,1.59458 -0.86358,3.17483 -1.42975,4.70492c-0.31175,0.78833 -0.60558,1.57667 -0.84567,2.3435l-2.37575,7.70417c-0.21858,0.71667 -0.5375,1.53008 -0.87792,2.38292c-0.21142,0.53033 -0.43358,1.08933 -0.63425,1.64117c6.87642,-2.42592 13.36942,-4.37525 20.20642,-6.06658v0c0.83492,-0.21142 1.61967,0.17917 1.9995,0.87075z" fill="#010101"></path><path d="M123.56408,102.67683c-0.86358,-0.74175 -2.01383,-0.91017 -3.08167,-1.19325c-1.30075,-0.344 -2.51192,-0.89942 -3.75892,-1.40467c-2.8165,-1.1395 -5.55417,-2.47608 -8.18075,-4.00258c-0.99975,-0.5805 -2.03533,-1.204 -3.19275,-1.27567c-2.32917,-0.14333 -4.13517,1.93142 -5.42875,3.87c-1.29358,1.94217 -2.76275,4.14592 -5.06683,4.51142c-0.98542,0.15767 -1.98875,-0.06092 -2.94908,-0.32967c-7.62175,-2.11775 -14.08608,-7.27417 -19.18875,-13.17592c-1.65192,-1.90992 -3.182,-3.99542 -4.02408,-6.39983c-0.89583,-2.5585 -0.91017,-5.54342 0.51242,-7.8475c0.87433,-1.41542 2.28617,-2.63375 2.41517,-4.28925c0.1075,-1.34017 -0.63067,-2.73767 -1.07142,-3.97392c-0.5375,-1.50142 -1.075,-3.00642 -1.6125,-4.50783c-1.06067,-2.95983 -2.11775,-5.91967 -3.17842,-8.88308c-0.1935,-0.5375 -0.40133,-1.10367 -0.83492,-1.47633c-0.54825,-0.473 -1.32942,-0.53392 -2.05325,-0.56975c-2.66958,-0.14333 -5.56492,-0.22575 -7.75792,1.30792c-1.30075,0.91017 -2.18942,2.29333 -2.96342,3.68008c-2.451,4.41108 -4.83392,9.97242 -4.51142,15.11092c0.32608,5.19583 3.42925,10.23758 6.41417,14.35125c3.12825,4.31075 6.9015,8.11267 10.87183,11.64942c1.58742,1.41542 3.21425,2.78783 4.86258,4.13517c9.92225,8.11983 20.769,15.72008 33.2605,18.619c4.28925,0.99617 8.84725,1.40108 13.05408,0.1075c6.84058,-2.10342 10.61025,-8.53192 8.78992,-15.53017c-0.22575,-0.86358 -0.54825,-1.73433 -1.18608,-2.35783c-0.04658,-0.03942 -0.09317,-0.08242 -0.13975,-0.12542z" fill="#d6e5e5"></path><path d="M110.33442,123.29892c-2.35783,0 -4.91275,-0.3225 -7.697,-0.9675c-13.28342,-3.08525 -24.63542,-11.32333 -33.98433,-18.97733c-1.66983,-1.36525 -3.311,-2.75558 -4.91992,-4.18533c-4.76583,-4.24983 -8.30258,-8.04458 -11.12625,-11.93608c-2.95267,-4.06708 -6.38908,-9.4815 -6.75458,-15.29008c-0.28308,-4.59025 1.26492,-9.85417 4.73717,-16.09275c0.82058,-1.47633 1.87408,-3.14258 3.50092,-4.2785c2.78783,-1.95292 6.31383,-1.75942 8.8795,-1.63042c0.78475,0.043 2.08908,0.11108 3.12825,1.00333c0.80625,0.69158 1.13592,1.61608 1.3545,2.23242l5.09192,14.17208c0.44075,1.10367 0.98542,2.47967 0.86717,3.94167c-0.129,1.68417 -1.07142,2.91683 -1.89558,4.00258c-0.27233,0.35833 -0.54825,0.71308 -0.77758,1.08575c-1.02483,1.6555 -1.15383,4.01692 -0.35117,6.31383c0.81342,2.31483 2.39725,4.32867 3.68725,5.81933c5.69033,6.579 11.85367,10.82525 18.31083,12.6205c0.7525,0.21142 1.54442,0.37625 2.18942,0.28667c1.52292,-0.24008 2.70542,-2.01383 3.8485,-3.72667c0.81342,-1.22192 3.23217,-4.945 7.03767,-4.67625c1.53725,0.09675 2.78067,0.82058 3.87717,1.45483c2.63733,1.53367 5.31408,2.84158 8.05533,3.94883l0.7955,0.32608c0.903,0.37625 1.80242,0.75608 2.752,1.00692l0.52317,0.13258c0.99258,0.24008 2.22883,0.54108 3.268,1.43692l0.215,0.1935c1.01767,0.99258 1.44408,2.3005 1.68058,3.19992c2.03533,7.84033 -2.16433,15.28292 -9.9975,17.6945c-1.94217,0.59125 -4.02767,0.88867 -6.29592,0.88867zM60.69092,53.45258c-1.78808,0 -3.35042,0.215 -4.55442,1.0535c-1.02125,0.71308 -1.76658,1.90275 -2.41875,3.08167c-3.08525,5.547 -4.53292,10.30208 -4.29283,14.13267c0.30458,4.88408 3.40775,9.73233 6.07375,13.40883c2.66958,3.6765 6.04508,7.2885 10.61742,11.36275c1.5695,1.40108 3.17483,2.75917 4.80167,4.09217c9.03358,7.39242 19.96275,15.34025 32.5295,18.26067c4.81958,1.118 8.78992,1.16458 12.12242,0.13975c6.03075,-1.85617 9.14825,-7.353 7.58233,-13.36583c-0.12183,-0.48375 -0.33325,-1.16458 -0.69875,-1.5265l1.11083,-1.41183l-1.16817,1.35808c-0.38342,-0.33325 -1.02842,-0.48733 -1.77375,-0.67008l-0.59842,-0.1505c-1.10725,-0.29383 -2.15717,-0.72383 -3.21067,-1.161l-0.76325,-0.31533c-2.89892,-1.17175 -5.72617,-2.55492 -8.41008,-4.11008c-0.93167,-0.54108 -1.71283,-0.99258 -2.40442,-1.03917c-1.04275,-0.05375 -2.41517,0.96033 -3.82342,3.0745c-1.42975,2.14642 -3.20708,4.80525 -6.278,5.289c-1.32583,0.21142 -2.57283,-0.05375 -3.70875,-0.37267c-7.15233,-1.98875 -13.90333,-6.60767 -20.06308,-13.73133c-1.50142,-1.73433 -3.354,-4.09575 -4.36092,-6.98033c-1.15742,-3.30742 -0.90658,-6.81192 0.67725,-9.38117c0.29383,-0.46942 0.63425,-0.9245 0.97467,-1.376c0.60558,-0.79192 1.12517,-1.47633 1.17892,-2.11417c0.05017,-0.63067 -0.29383,-1.49425 -0.62708,-2.33275l-5.1385,-14.29033c-0.07525,-0.20425 -0.22575,-0.6235 -0.3225,-0.72383c-0.13975,-0.09317 -0.74892,-0.12542 -0.97467,-0.13975c-0.71667,-0.03225 -1.41542,-0.06092 -2.07833,-0.06092z" fill="#010101"></path></g></g></svg>
+                      </a>
+                      <a href="https://www.reddit.com/submit?url=http://127.0.0.1:8000/detail/{{ post.id }}/&title=Shared Post from Persona">
+                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                        width="50" height="50"
+                        viewBox="0 0 172 172"
+                        style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="#343434"></path><g><path d="M31.72683,32.79467c6.20633,-6.56467 14.23658,-11.28392 22.30625,-15.36533c10.7715,-5.44667 22.50333,-8.772 34.62933,-8.772c8.20225,0 17.01725,3.04225 24.768,5.68317c8.21658,2.79858 16.1895,6.60408 22.83658,12.26575c7.46767,6.364 12.95375,14.79917 17.01008,23.736c5.74767,12.6635 10.64608,26.93592 10.14442,40.97183c-0.13975,3.88792 -0.89225,7.72925 -1.84542,11.49892c-4.90917,19.40733 -15.99958,38.0765 -33.44683,47.88767c-4.26417,2.39725 -8.81858,4.22833 -13.39808,5.95192c-5.04892,1.90275 -10.18383,3.70158 -15.53017,4.41467c-11.825,1.57667 -24.64617,-2.0855 -35.92292,-5.17792c-8.14492,-2.23242 -16.45108,-4.53292 -23.46725,-9.23783c-8.60717,-5.76558 -14.55908,-14.65942 -19.8445,-23.57117c-4.50425,-7.59667 -11.49175,-17.05308 -11.70675,-26.02933c-0.24008,-10.09783 1.04633,-20.24942 3.73742,-29.98533c0.72025,-2.60508 1.55158,-5.19583 2.80575,-7.5895c0.74892,-1.43333 1.64117,-2.78425 2.49758,-4.15308c3.43283,-5.51475 6.24575,-11.40575 9.85058,-16.80942c1.36883,-2.05325 2.90608,-3.95242 4.57592,-5.719z" fill="#f26322"></path><path d="M93.24908,163.23875c-9.97242,0 -20.2315,-2.81292 -29.46575,-5.34633l-0.98183,-0.26875c-8.1915,-2.24317 -16.65892,-4.56158 -23.994,-9.47792c-8.85442,-5.934 -15.0285,-15.11092 -20.38558,-24.14808c-0.75967,-1.27925 -1.591,-2.61583 -2.451,-3.99183c-4.36808,-7.01617 -9.32025,-14.97117 -9.50658,-22.90825c-0.24367,-10.234 1.03558,-20.50025 3.80908,-30.50492c0.6665,-2.41875 1.53725,-5.25675 2.93833,-7.94067c0.60917,-1.161 1.30792,-2.27183 2.01025,-3.38267l0.55542,-0.88867c1.49067,-2.39367 2.86308,-4.859 4.2355,-7.32075c1.75942,-3.16767 3.58333,-6.43925 5.64733,-9.53525c1.38317,-2.07117 2.98492,-4.07425 4.76583,-5.95908v0c6.71158,-7.095 15.29008,-11.93608 22.79717,-15.73442c11.76408,-5.94833 23.68942,-8.96192 35.44275,-8.96192c8.39575,0 17.23942,3.01358 25.04392,5.67242c9.97958,3.40417 17.64075,7.525 23.71808,12.70292c6.95167,5.92325 12.83192,14.11833 17.4795,24.3595c7.4605,16.43675 10.73567,29.713 10.30567,41.77092c-0.12183,3.50092 -0.7095,7.16667 -1.89917,11.87517c-5.5685,22.01958 -18.07433,39.8825 -34.30683,49.01283c-4.13875,2.32917 -8.44592,4.1065 -13.64175,6.06658c-4.9665,1.8705 -10.28775,3.7625 -15.92792,4.515c-2.0425,0.27233 -4.1065,0.39417 -6.18842,0.39417zM33.02758,34.02733c-1.64475,1.73792 -3.12108,3.58333 -4.38958,5.4825c-1.98517,2.97775 -3.77325,6.18483 -5.49683,9.29158c-1.40467,2.5155 -2.80217,5.031 -4.3215,7.47125l-0.56975,0.90658c-0.64858,1.02842 -1.29717,2.05683 -1.86333,3.13183c-1.25058,2.3865 -2.04608,4.99517 -2.66242,7.23475c-2.67675,9.67142 -3.91658,19.58292 -3.6765,29.46933c0.16483,6.95883 4.84108,14.47308 8.96908,21.09867c0.86717,1.40108 1.71283,2.75558 2.48325,4.05992c5.14567,8.67167 11.04025,17.46158 19.30342,22.99425c6.84775,4.59025 15.03208,6.82983 22.94408,8.99775l0.98542,0.27233c10.82525,2.97058 23.09817,6.3425 34.22442,4.85542c5.27108,-0.70233 10.37017,-2.5155 15.13958,-4.31433c5.04175,-1.89917 9.20558,-3.61917 13.15083,-5.83725c15.38325,-8.65017 27.25842,-25.69608 32.594,-46.76608c1.12158,-4.45408 1.677,-7.88692 1.78808,-11.12267c0.4085,-11.48817 -2.76275,-24.24842 -9.98317,-40.16558c-4.42542,-9.75742 -9.99392,-17.53325 -16.54067,-23.1125c-5.72975,-4.8805 -13.0075,-8.78633 -22.2525,-11.93608c-7.84033,-2.67317 -16.38658,-5.58642 -24.1875,-5.58642c-11.18358,0 -22.56425,2.88817 -33.82308,8.5785c-7.23833,3.65858 -15.48358,8.299 -21.81533,14.99625z" fill="#010101"></path><path d="M137.54625,93.41033c0,13.03617 -9.71442,26.04367 -20.21,32.81975c-10.95067,7.06633 -24.58883,9.44567 -37.50675,7.71492c-12.91792,-1.73075 -25.12633,-7.37808 -35.61475,-15.11808c-1.892,-1.3975 -3.75533,-2.88458 -5.16717,-4.76583c-4.3215,-5.76917 -3.50808,-13.70983 -3.28592,-20.91592c0.0215,-0.688 0.02867,-1.40108 -0.24367,-2.03533c-0.41567,-0.94958 -1.376,-1.51575 -2.20375,-2.13925c-5.27467,-3.94883 -6.01642,-12.65633 -1.48708,-17.44367c4.52933,-4.78733 13.26192,-4.52933 17.501,0.51958c7.32075,-7.52142 17.71242,-11.95758 28.208,-12.04358c2.56208,-0.0215 5.47892,0.07525 7.25983,-1.77017c1.06783,-1.10725 1.46558,-2.68392 1.82033,-4.18175c1.29,-5.45383 2.58358,-10.90408 3.87358,-16.35792c0.16842,-0.7095 0.37267,-1.47992 0.95317,-1.92067c0.55183,-0.42283 1.30433,-0.43717 1.9995,-0.42283c4.60458,0.08242 9.202,0.6235 13.70267,1.6125c2.1715,0.47658 4.429,1.05708 6.579,0.50167c1.65908,-0.42642 3.08883,-1.49425 4.73358,-1.97442c2.63375,-0.77042 5.60792,0.12183 7.61458,1.99233c2.00667,1.8705 3.08883,4.60817 3.2465,7.34942c0.14692,2.58 -0.58408,5.36067 -2.57283,7.009c-3.03508,2.51908 -7.88333,1.40825 -10.72492,-1.32942c-1.6125,-1.55517 -2.89892,-3.61917 -4.99875,-4.40033c-1.15742,-0.43358 -2.42592,-0.41208 -3.66217,-0.39058c-2.85592,0.05375 -5.70825,0.11108 -8.56417,0.16483c-0.58767,0.01075 -1.20758,0.03225 -1.70208,0.34758c-0.602,0.38342 -0.87433,1.10725 -1.09292,1.7845c-0.99975,3.06733 -1.6985,6.235 -2.08908,9.4385c-0.10392,0.86358 -0.1505,1.849 0.44075,2.49042c0.45867,0.49808 1.17892,0.63783 1.849,0.75608c0.688,1.13592 7.97292,1.59458 9.44925,1.9565c5.90533,1.44408 11.54192,3.49017 16.79867,6.579c0.47658,0.2795 0.9675,0.57333 1.51933,0.61633c0.54467,0.043 1.07142,-0.16483 1.58025,-0.36192c4.28925,-1.66983 9.14825,-2.94908 13.40883,-1.21117c4.43258,1.806 7.15233,6.76533 6.94808,11.54908c-0.22575,5.00592 -3.95958,11.12625 -8.35992,13.58083c0.12542,-0.07167 0.31892,-0.64858 0.3655,-0.77758" fill="#d6e5e5"></path><path d="M88.04608,136.2885c-2.79142,0 -5.61508,-0.18992 -8.45667,-0.56975c-12.39117,-1.65908 -24.99375,-7.00542 -36.43892,-15.45492c-1.83467,-1.35092 -3.92375,-2.97775 -5.53983,-5.13492c-4.26417,-5.69392 -3.97392,-13.21892 -3.7195,-19.85883l0.07525,-2.18225c0.01433,-0.43717 0.03225,-0.97467 -0.09317,-1.26133c-0.1505,-0.35117 -0.68442,-0.73458 -1.20042,-1.10367l-0.43717,-0.31892c-2.92042,-2.18942 -4.79092,-5.72258 -5.13133,-9.69292c-0.34042,-3.96675 0.903,-7.76508 3.41133,-10.42033c2.50833,-2.65167 6.278,-4.12083 10.21967,-3.98825c3.27875,0.09675 6.31742,1.247 8.59642,3.21067c7.58233,-7.12367 17.75183,-11.223 28.17933,-11.309l0.4515,-0.00358c2.15358,-0.01075 4.38242,-0.0215 5.52908,-1.21833c0.75967,-0.78475 1.08575,-2.15 1.37242,-3.354l3.87358,-16.35433c0.18275,-0.77758 0.49092,-2.08192 1.60892,-2.93117c1.07858,-0.82058 2.39725,-0.80983 3.11392,-0.79192c4.71925,0.086 9.45283,0.64142 14.05742,1.65192l0.46583,0.10392c1.90275,0.42283 3.698,0.82058 5.28183,0.41567c0.68442,-0.17558 1.38675,-0.52317 2.12492,-0.88867c0.7955,-0.39058 1.61608,-0.79908 2.55492,-1.07142c3.14258,-0.91375 6.79758,0.03225 9.33817,2.40442c2.22883,2.07833 3.61917,5.19942 3.80908,8.557c0.20425,3.47583 -0.99617,6.65067 -3.21425,8.4925c-3.92017,3.2465 -9.74667,1.83108 -13.11142,-1.419c-0.49092,-0.473 -0.96033,-0.99258 -1.42258,-1.51217c-0.96392,-1.07858 -1.8705,-2.09267 -2.95625,-2.50117c-0.84925,-0.31533 -1.92783,-0.29742 -3.00642,-0.27592l-8.56058,0.16483c-0.20067,0.00358 -0.65575,0.01075 -0.78475,0.07167c-0.043,0.043 -0.15408,0.23292 -0.34758,0.82417c-0.96392,2.95267 -1.63758,6.01642 -2.01383,9.09808c-0.10033,0.81342 -0.02867,1.03917 -0.00358,1.08575c0.08958,0.05375 0.61992,0.14333 0.82058,0.17558c0.387,0.06808 0.74533,0.26158 1.00692,0.54825c0.91017,0.43 4.37167,0.85283 5.88025,1.03917c1.20758,0.1505 2.2145,0.2795 2.68033,0.39417c6.63633,1.62325 12.29083,3.83775 17.286,6.77608c0.24367,0.14692 0.61992,0.3655 0.7525,0.37267c0.10033,0 0.52317,-0.13975 0.78475,-0.24008c4.214,-1.64117 9.68933,-3.26083 14.73825,-1.20042c4.99517,2.03533 8.30617,7.49633 8.0625,13.28342c-0.23292,5.34275 -3.83058,11.5025 -8.36708,14.52325c-0.50167,13.88542 -11.12267,26.93233 -21.00908,33.31067c-8.70033,5.61508 -19.21742,8.55342 -30.26125,8.55342zM40.28025,69.88217c-2.82725,0 -5.42517,1.03917 -7.1595,2.87383c-1.806,1.90992 -2.69825,4.70133 -2.44742,7.65042c0.25083,2.95267 1.60533,5.55058 3.70875,7.12725l0.37983,0.2795c0.82058,0.59483 1.849,1.333 2.39367,2.58c0.44433,1.02125 0.41208,2.04967 0.39058,2.80217l-0.07883,2.2145c-0.24367,6.33892 -0.49808,12.89283 3.01,17.57267c1.32583,1.77017 3.17125,3.19992 4.79808,4.40033c10.965,8.09117 22.99067,13.20458 34.787,14.78483c13.21892,1.77017 26.11533,-0.87075 36.29917,-7.44258c9.331,-6.02358 19.3715,-18.37533 19.38942,-31.27892c0,-0.07167 0.00358,-0.14333 0.01075,-0.215c0.02508,-0.26158 0.1075,-0.50883 0.23292,-0.72383c0.03942,-0.0645 0.07525,-0.12183 0.12183,-0.17917c0.03583,-0.08958 0.06808,-0.18992 0.086,-0.24367l0.10033,0.03225c0.06092,-0.05733 0.12183,-0.11108 0.1935,-0.15767c0.0645,-0.04658 0.129,-0.086 0.20067,-0.12542c3.82342,-2.15358 7.21325,-7.67908 7.39958,-12.083c0.18275,-4.23192 -2.27183,-8.35992 -5.83008,-9.81117c-3.88792,-1.58383 -8.49608,-0.17558 -12.083,1.22192c-0.59842,0.23292 -1.419,0.55183 -2.37575,0.47658c-0.946,-0.07525 -1.70208,-0.51958 -2.25392,-0.8385c-4.71925,-2.77708 -10.05842,-4.86617 -16.35075,-6.40342c-0.39058,-0.09675 -1.247,-0.1935 -2.26467,-0.31892c-4.343,-0.53033 -6.48942,-0.9245 -7.59667,-1.71283c-0.71308,-0.1505 -1.61967,-0.44433 -2.322,-1.20042c-1.22908,-1.32942 -0.99975,-3.15333 -0.903,-3.93092c0.40133,-3.30383 1.12517,-6.59333 2.16075,-9.76817c0.22575,-0.69517 0.64858,-1.98517 1.83825,-2.74483c0.93167,-0.59842 1.9565,-0.61633 2.63375,-0.62708l8.56058,-0.16483c1.32225,-0.02508 2.83442,-0.05375 4.32508,0.50525c1.9135,0.71308 3.21783,2.17508 4.37525,3.46508c0.40492,0.4515 0.81342,0.90658 1.24342,1.32225c2.193,2.11775 6.063,3.12108 8.33483,1.24342c1.34375,-1.118 2.064,-3.182 1.92783,-5.5255c-0.13975,-2.451 -1.118,-4.687 -2.67675,-6.14183c-1.64117,-1.53008 -3.956,-2.15 -5.891,-1.58383c-0.688,0.20067 -1.32942,0.52675 -1.97442,0.84567c-0.87075,0.43 -1.77375,0.87433 -2.8165,1.14308c-2.41875,0.61633 -4.82675,0.086 -6.95167,-0.387l-0.45867,-0.10033c-4.37525,-0.96033 -8.86875,-1.48708 -13.3515,-1.5695c-0.52317,-0.0215 -0.7955,0.01433 -0.89583,0.06808c-0.09317,0.11108 -0.22575,0.68442 -0.2795,0.89942l-3.87358,16.35433c-0.37267,1.5695 -0.8385,3.526 -2.279,5.01308c-2.19658,2.279 -5.461,2.29692 -8.08758,2.31125l-0.44433,0.00358c-10.0835,0.08242 -19.90542,4.27492 -26.9395,11.49892c-0.35475,0.3655 -0.81342,0.58767 -1.35092,0.54108c-0.50883,-0.01792 -0.97825,-0.25083 -1.30433,-0.63783c-1.69133,-2.01383 -4.35733,-3.21783 -7.32075,-3.30742c-0.1075,-0.00358 -0.22575,-0.00717 -0.34042,-0.00717zM97.72108,59.77v0zM97.42008,59.43317z" fill="#010101"></path><path d="M74.02092,86.9675c-0.52317,-0.28667 -0.77758,-0.92092 -1.31867,-1.26492c-0.63067,-0.39775 -1.32942,-0.70592 -2.03892,-0.93525c-1.42617,-0.46225 -2.95983,-0.59483 -4.44333,-0.35475c-1.333,0.215 -2.63733,0.73458 -3.6335,1.64475c-1.68417,1.53725 -2.26108,4.07067 -1.71642,6.28517c0.7525,3.04942 2.93117,4.50067 5.38575,6.063c0.63425,0.40492 1.376,0.58767 2.09625,0.74175c0.70592,0.1505 1.36167,0.2795 2.10342,0.2365c0.731,-0.03942 1.40825,-0.38342 2.0855,-0.6235c0.42642,-0.1505 0.71308,-0.50167 1.03917,-0.82058c0.34042,-0.33325 0.8385,-0.8815 0.94958,-1.376c0.10033,-0.4515 0.11467,-0.8815 0.26517,-1.333c0.13617,-0.41567 0.26517,-0.86 0.35833,-1.29c0.09675,-0.45508 0.00358,-0.91375 0.11467,-1.36883c0.086,-0.35833 0.07883,-0.69517 0.07883,-1.07142c0,-0.45508 0.01075,-0.91017 0.00358,-1.36525c-0.00717,-0.41925 -0.20425,-0.68442 -0.36192,-1.06425c-0.20783,-0.50167 -0.6665,-1.65908 -0.9675,-2.10342" fill="#f26322"></path><path d="M70.15808,101.179c-0.79192,0 -1.48708,-0.13617 -2.18583,-0.28667c-0.83133,-0.17917 -1.79525,-0.41925 -2.68033,-0.98183c-2.451,-1.55875 -5.2245,-3.32175 -6.16333,-7.14875c-0.731,-2.967 0.1505,-6.12033 2.24675,-8.03383c1.17533,-1.07142 2.752,-1.79525 4.55442,-2.08908c1.74867,-0.2795 3.569,-0.13258 5.28542,0.41925c0.90658,0.29742 1.72717,0.67367 2.44383,1.12875c0.50525,0.31892 0.83133,0.71667 1.075,1.00692c0.24725,0.13617 0.60558,0.52675 0.76683,0.75967c0.344,0.50167 0.69158,1.32942 1.0535,2.20733l-1.43692,1.17892l1.61608,-0.77042c0.15767,0.32608 0.39058,0.82058 0.4085,1.51217l-0.00358,1.41183c0,0.48375 0,0.94242 -0.12183,1.47992c-0.0215,0.65933 -0.03942,0.99617 -0.1075,1.33658c-0.10392,0.48733 -0.25083,0.99617 -0.40492,1.47275c-0.0645,0.18275 -0.07883,0.35475 -0.1075,0.52675c-0.03225,0.215 -0.06808,0.42642 -0.11467,0.64142c-0.16483,0.73458 -0.63783,1.47633 -1.4405,2.26467c-0.47658,0.48375 -0.94958,0.96392 -1.69492,1.22908l-0.43358,0.16483c-0.58408,0.22575 -1.3115,0.51242 -2.15717,0.559c-0.13975,0.00717 -0.26875,0.01075 -0.39775,0.01075zM67.68917,86.08242c-0.39775,0 -0.7955,0.03225 -1.18608,0.09317c-0.774,0.12542 -1.87408,0.43717 -2.71258,1.19683c-1.12158,1.02483 -1.59817,2.84517 -1.1825,4.53292c0.55542,2.26467 2.11417,3.39342 4.60817,4.98083c0.38342,0.24367 0.96033,0.38342 1.51217,0.50167c0.60558,0.13258 1.11442,0.22575 1.62325,0.20067c0.27233,-0.01433 0.65217,-0.16125 1.04992,-0.31892l0.53392,-0.20425c-0.01792,0 0.11467,-0.13617 0.21142,-0.23292c0.56617,-0.559 0.66292,-0.7525 0.66292,-0.75608l0.043,-0.31175c0.05733,-0.36908 0.11825,-0.731 0.24367,-1.11083c0.11467,-0.35117 0.22575,-0.731 0.30458,-1.0965c0.01792,-0.59842 0.02508,-0.98183 0.12542,-1.41183c0.02867,-0.12542 0.02867,-0.3225 0.02867,-0.57333l0.00358,-1.40825c-0.01433,-0.02867 -0.215,-0.39058 -0.22575,-0.41925c-0.22575,-0.55183 -0.46225,-1.15742 -0.66292,-1.54083c-0.301,-0.24725 -0.52317,-0.516 -0.69875,-0.72742c-0.07883,-0.10033 -0.19708,-0.2365 -0.24008,-0.27233c-0.45508,-0.28667 -1.00333,-0.5375 -1.62325,-0.74175c-0.78833,-0.24725 -1.60892,-0.37983 -2.41875,-0.37983z" fill="#010101"></path><path d="M110.37025,87.29358c-0.35833,-0.32608 -1.0535,-0.87075 -1.46917,-1.08933c-0.20783,-0.1075 -0.301,-0.13258 -0.54825,-0.15767c-0.39417,-0.03583 -0.74533,-0.13258 -1.14667,-0.15767c-0.76683,-0.04658 -1.49783,-0.40133 -2.22525,-0.59483c-2.24317,-0.602 -4.73358,0.00358 -5.9555,2.09267c-0.74533,1.27567 -0.94958,2.80575 -0.903,4.28208c0.06808,2.29692 0.78475,4.7085 2.54775,6.17767c1.10725,0.9245 2.51908,1.39392 3.92017,1.72717c1.204,0.28667 2.48325,0.48375 3.66933,0.12542c1.08217,-0.32608 1.99233,-1.0965 2.68033,-1.99233c2.20017,-2.86667 2.42233,-7.96575 -0.56975,-10.41317" fill="#f26322"></path><path d="M106.85858,101.68425c-0.94958,0 -1.86333,-0.172 -2.68033,-0.36908c-1.40467,-0.33325 -3.19633,-0.87433 -4.65833,-2.09267c-1.96008,-1.634 -3.09242,-4.29642 -3.19275,-7.49992c-0.06092,-2.07833 0.32967,-3.84133 1.15025,-5.24242c1.53008,-2.61583 4.72283,-3.79475 7.96933,-2.91683c0.27592,0.07525 0.55542,0.16842 0.83492,0.26517c0.387,0.13258 0.75608,0.258 1.032,0.27592c0.28308,0.01433 0.55542,0.05733 0.82775,0.10392l0.37267,0.05375c0.48375,0.05017 0.79908,0.13975 1.204,0.35117c0.60917,0.31892 1.419,0.9675 1.81675,1.32583c3.74458,3.10675 3.52242,9.33817 0.82058,12.86058c-1.00333,1.30792 -2.24317,2.21092 -3.58333,2.61583c-0.64142,0.1935 -1.28642,0.26875 -1.9135,0.26875zM103.32183,86.86717c-1.03917,0 -2.1285,0.36908 -2.74842,1.42258c-0.48017,0.82058 -0.70233,1.93858 -0.66292,3.32892c0.0645,2.1285 0.75967,3.89867 1.90275,4.85183c0.88867,0.74533 2.1715,1.118 3.19275,1.35808c0.89942,0.215 1.92067,0.39775 2.73408,0.1505c0.78117,-0.2365 1.3975,-0.87433 1.77733,-1.36883c1.64833,-2.14283 1.88483,-6.15975 -0.28308,-7.9335c-0.02867,-0.0215 -0.05375,-0.043 -0.07525,-0.06808c-0.33325,-0.30458 -0.89225,-0.72025 -1.08575,-0.82058c-0.09317,0.0215 -0.31892,-0.01433 -0.52317,-0.05375c-0.14333,-0.02508 -0.28667,-0.05375 -0.44433,-0.06092c-0.76325,-0.04658 -1.40825,-0.26517 -1.978,-0.45867c-0.20425,-0.07167 -0.40492,-0.13975 -0.60917,-0.1935c-0.36908,-0.09675 -0.77758,-0.15408 -1.19683,-0.15408z" fill="#010101"></path><path d="M87.43333,120.97333c-6.6435,0 -13.52708,-2.47967 -19.38583,-6.99108c-0.78475,-0.602 -0.93167,-1.72717 -0.32967,-2.51192c0.60558,-0.78475 1.72717,-0.93167 2.51192,-0.32608c5.23525,4.02767 11.34483,6.24575 17.20717,6.24575c2.881,-0.06808 5.977,-0.60917 8.686,-1.76658c1.89558,-0.80625 3.3755,-2.02458 4.94858,-3.31458c0.82058,-0.67367 1.65192,-1.35808 2.5585,-2.00308c0.80267,-0.57333 1.92425,-0.39058 2.49758,0.41925c0.57333,0.80625 0.387,1.92425 -0.41925,2.50117c-0.83133,0.59483 -1.60175,1.22908 -2.36142,1.85258c-1.69492,1.39392 -3.44717,2.838 -5.81575,3.84492c-3.13542,1.34017 -6.61483,2.04967 -10.05125,2.05325c-0.01433,-0.00358 -0.03225,-0.00358 -0.04658,-0.00358z" fill="#010101"></path></g></g></svg>
+                      </a>
+                    </div>
+                    <div id="share-link-div">
+                      <a href="{% url 'persona:profile' post.author.id %}" id="share-link">
+                        <textarea id="socail-link-copy{{ post.id }}" class="socail-link-copy" rows="1" cols="33">https://persona.tk/post/{{ post.id }}/</textarea>
+                      </a>
+                      <div class="copt-btn-div">
+                        <button class="copy-btn" post-id="{{ post.id }}">Copy link!</button>
+                      </div>
+                    </div>
+                    <div class="icon-send-gmail">
+                      <a href="https://mail.google.com/">
+                        <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                        width="40" height="40"
+                        viewBox="0 0 172 172"
+                        style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="#343434"></path><g><path d="M19.70833,145.125h132.58333c6.92658,0 12.54167,-5.61508 12.54167,-12.54167v-93.16667c0,-6.92658 -5.61508,-12.54167 -12.54167,-12.54167h-132.58333c-6.92658,0 -12.54167,5.61508 -12.54167,12.54167v93.16667c0,6.92658 5.61508,12.54167 12.54167,12.54167z" fill="#e0e0e0"></path><path d="M93.16667,145.125h59.125c6.92658,0 12.54167,-5.61508 12.54167,-12.54167v-93.16667c0,-6.92658 -5.61508,-12.54167 -12.54167,-12.54167h-132.58333c-6.92658,0 -12.54167,5.61508 -12.54167,12.54167z" fill="#d9d9d9"></path><path d="M24.16958,145.125h128.12208c6.92658,0 12.54167,-5.61508 12.54167,-12.54167v-91.375z" fill="#eeeeee"></path><path d="M92.25292,145.125h60.03875c6.92658,0 12.54167,-5.61508 12.54167,-12.54167v-91.375l-97.57058,72.08233z" fill="#e0e0e0"></path><path d="M152.29167,34.04167h-132.58333c-6.92658,0 -12.54167,-1.55158 -12.54167,5.375v93.16667c0,6.92658 5.61508,12.54167 12.54167,12.54167h5.375v-102.125h121.83333v102.125h5.375c6.92658,0 12.54167,-5.61508 12.54167,-12.54167v-93.16667c0,-6.92658 -5.61508,-5.375 -12.54167,-5.375z" fill="#ca3737"></path><path d="M152.29167,26.875h-66.29167h-66.29167c-6.92658,0 -12.54167,5.504 -12.54167,12.54167c0,4.3215 5.4395,8.09117 5.4395,8.09117l73.39383,51.95117l73.39383,-51.94758c0,0 5.4395,-3.77325 5.4395,-8.09117c0,-7.04125 -5.61508,-12.54525 -12.54167,-12.54525z" fill="#f5f5f5"></path><path d="M154.96483,27.16883l-68.96483,48.08117l-68.96483,-48.08117c-5.64017,1.20758 -9.8685,6.14542 -9.8685,12.24783c0,4.3215 5.4395,8.09117 5.4395,8.09117l73.39383,51.95117l73.39383,-51.94758c0,0 5.4395,-3.77325 5.4395,-8.09117c0,-6.106 -4.22833,-11.04383 -9.8685,-12.25142z" fill="#e84f4b"></path></g></g></svg>
+                      </a>
+                      <form class="send-mail" data-catid="{{ post.id }}">
+                        <input type="text" name="to-gmail" id="gmail{{ post.id }}" class="gmail-input" placeholder="Enter email here to share...">
+                        <button type="submit" class="send_mail" id="send_mail{{ post.id }}" data-catid="{{ post.id }}">Send</button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            {% if tags.count > 0 %}
+            <span class="show-tags all-comments" data-catid="{{ post.id }}" id="show-tags{{ post.id }}" style="display: flex;">
+              <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+              width="23" height="23"
+              viewBox="0 0 172 172"
+              style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#000000"><path d="M17.2,13.76c-5.65719,0 -10.32,4.66281 -10.32,10.32v123.84c0,5.65719 4.66281,10.32 10.32,10.32h86v-6.88h-86c-1.90812,0 -3.44,-1.53187 -3.44,-3.44v-123.84c0,-1.90812 1.53188,-3.44 3.44,-3.44h137.6c1.90813,0 3.44,1.53188 3.44,3.44v72.24h6.88v-72.24c0,-5.65719 -4.66281,-10.32 -10.32,-10.32zM36.8725,48.16c-1.89469,0.26875 -3.225,2.02906 -2.95625,3.92375c0.26875,1.89469 2.02906,3.225 3.92375,2.95625h96.32c1.23625,0.01344 2.39188,-0.63156 3.02344,-1.70656c0.61813,-1.075 0.61813,-2.39187 0,-3.46687c-0.63156,-1.075 -1.78719,-1.72 -3.02344,-1.70656h-96.32c-0.1075,0 -0.215,0 -0.3225,0c-0.1075,0 -0.215,0 -0.3225,0c-0.1075,0 -0.215,0 -0.3225,0zM36.8725,82.56c-1.89469,0.26875 -3.225,2.02906 -2.95625,3.92375c0.26875,1.89469 2.02906,3.225 3.92375,2.95625h96.32c1.23625,0.01344 2.39188,-0.63156 3.02344,-1.70656c0.61813,-1.075 0.61813,-2.39187 0,-3.46687c-0.63156,-1.075 -1.78719,-1.72 -3.02344,-1.70656h-96.32c-0.1075,0 -0.215,0 -0.3225,0c-0.1075,0 -0.215,0 -0.3225,0c-0.1075,0 -0.215,0 -0.3225,0zM130.3975,109.9725c-0.14781,0.02688 -0.29562,0.06719 -0.43,0.1075c-1.59906,0.36281 -2.72781,1.80063 -2.6875,3.44v6.88h-6.88c-0.1075,0 -0.215,0 -0.3225,0c-1.89469,0.09406 -3.37281,1.70656 -3.27875,3.60125c0.09406,1.89469 1.70656,3.37281 3.60125,3.27875h6.88v13.76h-6.88c-0.1075,0 -0.215,0 -0.3225,0c-0.1075,0 -0.215,0 -0.3225,0c-1.89469,0.17469 -3.29219,1.86781 -3.1175,3.7625c0.17469,1.89469 1.86781,3.29219 3.7625,3.1175h6.88v6.88c-0.01344,1.23625 0.63156,2.39188 1.70656,3.02344c1.075,0.61813 2.39187,0.61813 3.46687,0c1.075,-0.63156 1.72,-1.78719 1.70656,-3.02344v-6.88h13.76v6.88c-0.01344,1.23625 0.63156,2.39188 1.70656,3.02344c1.075,0.61813 2.39187,0.61813 3.46687,0c1.075,-0.63156 1.72,-1.78719 1.70656,-3.02344v-6.88h6.88c1.23625,0.01344 2.39188,-0.63156 3.02344,-1.70656c0.61813,-1.075 0.61813,-2.39187 0,-3.46687c-0.63156,-1.075 -1.78719,-1.72 -3.02344,-1.70656h-6.88v-13.76h6.88c1.23625,0.01344 2.39188,-0.63156 3.02344,-1.70656c0.61813,-1.075 0.61813,-2.39187 0,-3.46687c-0.63156,-1.075 -1.78719,-1.72 -3.02344,-1.70656h-6.88v-6.88c0.04031,-0.99437 -0.36281,-1.94844 -1.075,-2.62031c-0.72562,-0.68531 -1.70656,-1.02125 -2.6875,-0.92719c-0.14781,0.02688 -0.29562,0.06719 -0.43,0.1075c-1.59906,0.36281 -2.72781,1.80063 -2.6875,3.44v6.88h-13.76v-6.88c0.04031,-0.99437 -0.36281,-1.94844 -1.075,-2.62031c-0.72562,-0.68531 -1.70656,-1.02125 -2.6875,-0.92719zM36.8725,116.96c-1.89469,0.26875 -3.225,2.02906 -2.95625,3.92375c0.26875,1.89469 2.02906,3.225 3.92375,2.95625h65.36v-6.88h-65.36c-0.1075,0 -0.215,0 -0.3225,0c-0.1075,0 -0.215,0 -0.3225,0c-0.1075,0 -0.215,0 -0.3225,0zM134.16,127.28h13.76v13.76h-13.76z"></path></g></g></svg>
+              &nbsp;
+              <span class="hide-for-mobile" style="font-size: 14px;">HashTags</span>
+            </span>
+            <span class="hide-tags all-comments" data-catid="{{ post.id }}" id="hide-tags{{ post.id }}">
+              <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+              width="23" height="23"
+              viewBox="0 0 172 172"
+              style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#000000"><path d="M17.2,13.76c-5.68406,0 -10.32,4.63594 -10.32,10.32v123.84c0,5.68406 4.63594,10.32 10.32,10.32h92.88v-34.4h-72.24c-1.89469,0 -3.44,-1.53187 -3.44,-3.44c0,-1.90812 1.54531,-3.44 3.44,-3.44h72.24v-3.44c0,-5.6975 4.6225,-10.32 10.32,-10.32h44.72v-79.12c0,-5.68406 -4.63594,-10.32 -10.32,-10.32zM37.84,48.16h96.32c1.90813,0 3.44,1.54531 3.44,3.44c0,1.89469 -1.53187,3.44 -3.44,3.44h-96.32c-1.89469,0 -3.44,-1.54531 -3.44,-3.44c0,-1.89469 1.54531,-3.44 3.44,-3.44zM37.84,82.56h96.32c1.90813,0 3.44,1.54531 3.44,3.44c0,1.89469 -1.53187,3.44 -3.44,3.44h-96.32c-1.89469,0 -3.44,-1.54531 -3.44,-3.44c0,-1.89469 1.54531,-3.44 3.44,-3.44zM130.72,110.08c-1.90812,0 -3.44,1.53188 -3.44,3.44v6.88h-6.88c-1.90812,0 -3.44,1.53188 -3.44,3.44c0,1.90813 1.53188,3.44 3.44,3.44h6.88v13.76h-6.88c-1.90812,0 -3.44,1.53188 -3.44,3.44c0,1.90813 1.53188,3.44 3.44,3.44h6.88v6.88c0,1.90813 1.53188,3.44 3.44,3.44c1.90813,0 3.44,-1.53187 3.44,-3.44v-6.88h13.76v6.88c0,1.90813 1.53188,3.44 3.44,3.44c1.90813,0 3.44,-1.53187 3.44,-3.44v-6.88h6.88c1.90813,0 3.44,-1.53187 3.44,-3.44c0,-1.90812 -1.53187,-3.44 -3.44,-3.44h-6.88v-13.76h6.88c1.90813,0 3.44,-1.53187 3.44,-3.44c0,-1.90812 -1.53187,-3.44 -3.44,-3.44h-6.88v-6.88c0,-1.90812 -1.53187,-3.44 -3.44,-3.44c-1.90812,0 -3.44,1.53188 -3.44,3.44v6.88h-13.76v-6.88c0,-1.90812 -1.53187,-3.44 -3.44,-3.44zM134.16,127.28h13.76v13.76h-13.76z"></path></g></g></svg>
+              &nbsp;
+              <span class="hide-for-mobile" style="font-size: 14px;">HashTags</span>
+            </span>
+          {% else %}
+            <span id="no-tags" class="hide-for-mobile">No Hashtags</span>
+          {% endif %}
+          </div>
+
+          {% if post.img and post.dst or post.vid and post.dst or post.aud and post.dst or post.youtube and post.dst %}
+            <div class="post-info" id="post-info{{ post.id }}">
+              <p>
+                {{ post.dst|truncatechars_html:150 }}
+                {% if post.dst|length > 150 %}
+                <span class="read-more" data-catid="{{ post.id }}">read more</span>
+                {% endif %}
+              </p>
+            </div>
+            <div class="post-info-full" id="post-info-full{{ post.id }}">
+              <p>
+                {{ post.dst|striptags|linebreaksbr }}
+                <span class="read-less" data-catid="{{ post.id }}">read less</span>
+              </p>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      {% if tags.count > 0 %}
+        <div class="post-tags" id="post-tags{{ post.id }}">
+          <p>
+            {% for tag in tags %}
+              <a href="{% url 'persona:index' %}" id="tag-link">#{{ tag }}</a>
+            {% endfor %}
+            &nbsp;<span  id="hide-for-tags" class="hide-tags" data-catid="{{ post.id }}">hide</span>
+          </p>
+        </div>
+      {% endif %}
+
+      {% if posts %}
+      {% else %}
+        <div class="the-end">
+          <h4>No Posts Yet!</h4>
+          {{ user.username }} has not created any post.
+        </div>
+      {% endif %}
+      </div>
+      {% if posts.has_next %}
+        <div class="load-more">
+          <div class="loadingio-spinner-spin-yr43v6c09rm"><div class="ldio-00n9sjs9kity">
+          <div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div><div><div></div></div>
+          </div></div>
+          <br>
+          <a class="infinite-more-link" href="?page={{ posts.next_page_number }}" >Loading...</a>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="following hide-for-mobile">
+      <h5 class="ff">{{ no_following }} Following</h5>
+      {% for f in following %}
+        <a href="{% url 'persona:profile' f.followed_to.id %}" class="user_link">
+          <div class="p_user">
+            <img src="{{ f.followed_to.profile.dp.url }}" alt="Profile Picture" height=50px id="dp_img_f">
+            <div id="username_f">
+              <div>
+                {{ f.followed_to.username }}
+                {% if f.followed_to.profile.verified %}
+                  <img src="https://img.icons8.com/color/17/000000/verified-account.png" style="margin: 0px; padding: 0px;">
+                {% endif %}
+              </div>
+              <div id="user_name_f">{{ f.followed_to.first_name }} {{ f.followed_to.last_name }}</div>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+      {% for f in f_following %}
+        <div class="p_user_f">
+          <a href="{% url 'persona:profile' f.followed_to.id %}" class="p_user_f-two">
+            <img src="{{ f.followed_to.profile.dp.url }}" alt="Profile Picture" height=50px id="dp_img_f">
+            <div id="username_f">
+              <div class="username_username">
+                {{ f.followed_to.username }}
+                {% if f.followed_to.profile.verified %}
+                  <img src="https://img.icons8.com/color/17/000000/verified-account.png" style="margin: 0px; padding: 0px;">
+                {% endif %}
+              </div>
+              <div id="user_name_f">{{ f.followed_to.first_name }} {{ f.followed_to.last_name }}</div>
+            </div>
+          </a>
+          <div class="follow f-f-follow{{ f.followed_to.id }}" data-catid="{{ f.followed_to.id }}">
+            <button class="f-btn_f">Follow</button>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- For Mobile -->
+    <div class="following-modal">
+      <div class="following-modal-content hide-for-pc">
+        <div class="close-following">&times;</div>
+        <h5 class="ff">{{ no_following }} Following</h5>
+        <hr>
+        {% for f in following %}
+          <a href="{% url 'persona:profile' f.followed_to.id %}" class="user_link">
+            <div class="p_user">
+              <img src="{{ f.followed_to.profile.dp.url }}" alt="Profile Picture" height=50px id="dp_img_f">
+              <div id="username_f">
+                <div>
+                  {{ f.followed_to.username }}
+                  {% if f.followed_to.profile.verified %}
+                    <img src="https://img.icons8.com/color/17/000000/verified-account.png" style="margin: 0px; padding: 0px;">
+                  {% endif %}
+                </div>
+                <div id="user_name_f">{{ f.followed_to.first_name }} {{ f.followed_to.last_name }}</div>
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+        {% for f in f_following %}
+          <div class="p_user_f">
+            <a href="{% url 'persona:profile' f.followed_to.id %}" class="p_user_f-two">
+              <img src="{{ f.followed_to.profile.dp.url }}" alt="Profile Picture" height=50px id="dp_img_f">
+              <div id="username_f">
+                <div class="username_username">
+                  {{ f.followed_to.username }}
+                  {% if f.followed_to.profile.verified %}
+                    <img src="https://img.icons8.com/color/17/000000/verified-account.png" style="margin: 0px; padding: 0px;">
+                  {% endif %}
+                </div>
+                <div id="user_name_f">{{ f.followed_to.first_name }} {{ f.followed_to.last_name }}</div>
+              </div>
+            </a>
+            <div class="follow f-f-follow{{ f.followed_to.id }}" data-catid="{{ f.followed_to.id }}">
+              <button class="f-btn_f">Follow</button>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <!-- For Mobile -->
+    <div class="followers-modal">
+      <div class="followers-modal-content hide-for-pc">
+        <div class="close-followers">&times;</div>
+        <h5 class="ff update-followers">{{ no_followers }} Followers</h5>
+        <hr>
+        <a href="{% url 'persona:profile' request.user.id %}" class="user_link" id="i-follow-unfollow-mob">
+          <div class="p_user">
+            <img src="{{ request.user.profile.dp.url }}" alt="Profile Picture" height=50px id="dp_img_f">
+            <div id="username_f">
+              <div>
+                {{ request.user.username }}
+                {% if request.user.profile.verified %}
+                  <img src="https://img.icons8.com/color/17/000000/verified-account.png" style="margin: 0px; padding: 0px;">
+                {% endif %}
+              </div>
+              <div id="user_name_f">{{ request.user.first_name }} {{ request.user.last_name }}</div>
+            </div>
+          </div>
+        </a>
+        {% if follow == True %}
+          <a href="{% url 'persona:profile' request.user.id %}" class="user_link" id="i-follow-real-mob">
+            <div class="p_user">
+              <img src="{{ request.user.profile.dp.url }}" alt="Profile Picture" height=50px id="dp_img_f">
+              <div id="username_f">
+                <div>
+                  {{ request.user.username }}
+                  {% if request.user.profile.verified %}
+                    <img src="https://img.icons8.com/color/17/000000/verified-account.png" style="margin: 0px; padding: 0px;">
+                  {% endif %}
+                </div>
+                <div id="user_name_f">{{ request.user.first_name }} {{ request.user.last_name }}</div>
+              </div>
+            </div>
+          </a>
+        {% endif %}
+        {% for f in followers %}
+          <a href="{% url 'persona:profile' f.followed_by.id %}" class="user_link">
+            <div class="p_user">
+              <img src="{{ f.followed_by.profile.dp.url }}" alt="Profile Picture" height=50px id="dp_img_f">
+              <div id="username_f">
+                <div>
+                  {{ f.followed_by.username }}
+                  {% if f.followed_by.profile.verified %}
+                    <img src="https://img.icons8.com/color/17/000000/verified-account.png" style="margin: 0px; padding: 0px;">
+                  {% endif %}
+                </div>
+                <div id="user_name_f">{{ f.followed_by.first_name }} {{ f.followed_by.last_name }}</div>
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+        {% for f in f_followers %}
+          <div class="p_user_f">
+            <a href="{% url 'persona:profile' f.followed_by.id %}" class="p_user_f-two">
+              <img src="{{ f.followed_by.profile.dp.url }}" alt="Profile Picture" height=50px id="dp_img_f">
+              <div id="username_f">
+                <div class="username_username">
+                  {{ f.followed_by.username }}
+                  {% if f.followed_by.profile.verified %}
+                    <img src="https://img.icons8.com/color/17/000000/verified-account.png" style="margin: 0px; padding: 0px;">
+                  {% endif %}
+                </div>
+                <div id="user_name_f">{{ f.followed_by.first_name }} {{ f.followed_by.last_name }}</div>
+              </div>
+            </a>
+            <div class="follow f-f-follow{{ f.followed_by.id }}" data-catid="{{ f.followed_by.id }}">
+              <button class="f-btn_f">Follow</button>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/jquery.waypoints.min.js"></script>
+<script src="/static/js/infinite.min.js"></script>
+<script type="text/javascript">
+
+  $('.followers').offset({top: 390});
+  $('.following').offset({top: 390});
+
+  $('body').on('click', '.follow', function(){
+    var user_id = $(this).attr("data-catid");
+    $.ajax({
+      type: "GET",
+      url: "{% url 'persona:follow-it' %}",
+      dataType: "json",
+      data: {
+        user_id: user_id
+      },
+      success: function(data){
+        $('.update-followers').html(data.followers + " Followers");
+        if (data.followed){
+          $('.f-f-follow' + user_id).html("<div class='p-unfollow-btn'>Follow-<br>ing</div>");
+          $('#like-follow' + user_id).html("<div class='unfollow-btn'>Following</div>");
+        }
+      }
+    })
+  });
+
+  $('.main-follow').click(function(){
+    var user_id = $(this).attr("data-catid");
+    $.ajax({
+      type: "GET",
+      url: "{% url 'persona:follow-it' %}",
+      dataType: "json",
+      data: {
+        user_id: user_id
+      },
+      success: function(data){
+        $('.update-followers').html(data.followers + " Followers");
+        if (data.followed){
+          $('#like-follow' + user_id).html("<div class='unfollow-btn'>Following</div>");
+          $('#direct-follow' + user_id).html("<div class='follow' id='unfollow{{ user.id }}' data-catid='{{ user.id }}'><button id='edit1-p-uf'>Unfollow</button></div>");
+          $('#direct-follow-mob' + user_id).html("<div class='main-follow' id='unfollow-mob{{ user.id }}' data-catid='{{ user.id }}'><button id='edit1-p-uf'>Unfollow</button></div>");
+          document.getElementById('i-follow-unfollow').style.display = "block";
+          document.getElementById('i-follow-unfollow-mob').style.display = "block";
+        } else if(data.unfollowed){
+          $('#unfollow' + user_id).html("<div class='main-follow' id='direct-follow{{ user.id }}' data-catid='{{ user.id }}'><button id='edit1-p'>Follow</button></div>");
+          $('#unfollow-mob' + user_id).html("<div class='main-follow' id='direct-follow-mob{{ user.id }}' data-catid='{{ user.id }}'><button id='edit1-p'>Follow</button></div>");
+          document.getElementById('i-follow-unfollow').style.display = "none";
+          document.getElementById('i-follow-unfollow-mob').style.display = "none";
+          document.getElementById('i-follow-real').style.display = "none";
+          document.getElementById('i-follow-real-mob').style.display = "none";
+        }
+      }
+    })
+  });
+
+  $('#mob-following').click(function(){
+    window.history.pushState({}, '', 'following/');
+    modal = document.getElementsByClassName('following-modal')[0];
+    modal.style.display = "block";
+    $('.close-following').click(function(){
+      window.history.back();
+      window.history.forword();
+    })
+    window.onclick = function(event){
+      if(event.target == modal){
+        window.history.back();
+        window.history.forword();
+      }
+    }
+  })
+
+  $('#mob-followers').click(function(){
+    window.history.pushState({}, '', 'followers/');
+    modal = document.getElementsByClassName('followers-modal')[0];
+    modal.style.display = "block";
+    $('.close-followers').click(function(){
+      window.history.back();
+      window.history.forword();
+    })
+    window.onclick = function(event){
+      if(event.target == modal){
+        window.history.back();
+        window.history.forword();
+      }
+    }
+  })
+
+  //Posts
+  var infinite = new Waypoint.Infinite({
+    element: $('.infinite-container')[0],
+    handler: function(direction){
+
+    },
+    offset: 'bottom-in-view',
+
+    onBeforePageLoad: function(){
+      $('.load-more').show();
+    },
+    onAfterPageLoad: function(){
+      $('.load-more').hide();
+      window.instgrm.Embeds.process();
+    }
+  });
+
+  window.addEventListener('popstate', function(event){
+    document.getElementsByClassName('following-modal')[0].style.display = "none";
+    document.getElementsByClassName('followers-modal')[0].style.display = "none";
+    var comments = document.querySelectorAll('.comment-modal');
+    var likes = document.querySelectorAll('.mymodal');
+    var share = document.querySelectorAll('.share-modal');
+    var i_c;
+    var i_l;
+    var i_s;
+    for(i_c = 0; i_c < comments.length; i_c++){
+      comments[i_c].style.display = "none";
+    }
+    for(i_l = 0; i_l < likes.length; i_l++){
+      likes[i_l].style.display = "none";
+    }
+    for(i_s = 0; i_s < share.length; i_s++){
+      share[i_s].style.display = "none";
+    }
+  })
+
+  $('.infinite-container').on('click', '.read-more', function(){
+    var id = $(this).attr('data-catid');
+    $('#post-info' + id).hide();
+    document.getElementById('post-info-full' + id).style.display = "block";
+  })
+  $('.infinite-container').on('click', '.read-less', function(){
+    var id = $(this).attr('data-catid');
+    $('#post-info' + id).show();
+    document.getElementById('post-info-full' + id).style.display = "none";
+  })
+
+  $('.infinite-container').on('click', '.show-tags', function(){
+    var id = $(this).attr('data-catid');
+    document.getElementById('show-tags' + id).style.display = "none";
+    document.getElementById('post-tags' + id).style.display = "block";
+    document.getElementById('hide-tags' + id).style.display = "flex";
+    document.getElementById('post-info-full' + id).style.display = "none";
+    document.getElementById('post-info' + id).style.display = "block";
+  })
+  $('.infinite-container').on('click', '.hide-tags', function(){
+    var id = $(this).attr('data-catid');
+    document.getElementById('show-tags' + id).style.display = "flex";
+    document.getElementById('post-tags' + id).style.display = "none";
+    document.getElementById('hide-tags' + id).style.display = "none";
+  })
+
+  $('.infinite-container').on('click', '.likebutton', function(){
+    var id = $(this).attr("data-catid");
+    $.ajax({
+      type: "GET",
+      url: "{% url 'persona:likeit' %}",
+      dataType: "json",
+      data: {
+        post_id: id
+      },
+      success: function(data){
+        $('.all_likes' + id).html(data.likes + ' Likes');
+        $('#modal-like' + id).html(data.likes + ' Likes');
+        if (data.likedit){
+          $('.like' + id).html('<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="27" height="27" viewBox="0 0 172 172" style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#800080"><path d="M54.72422,22.93333c-20.726,0 -37.52422,16.79822 -37.52422,37.52422c0,36.07642 41.84746,70.54796 61.39817,85.89922c0.01862,0.01499 0.03728,0.02992 0.05599,0.04479c0.13396,0.10517 0.31608,0.25498 0.44792,0.35833l0.0112,-0.0112c1.98358,1.4988 4.40056,2.31232 6.88672,2.31797c2.48999,-0.00322 4.91127,-0.81686 6.89792,-2.31797v0.0112c0.03859,-0.03025 0.09561,-0.07038 0.13437,-0.10078c0.02948,-0.02312 0.0712,-0.05517 0.10079,-0.07839c0.03755,-0.03335 0.07487,-0.06694 0.11198,-0.10078c19.49011,-15.2961 61.55495,-49.85989 61.55495,-86.02239c0,-20.726 -16.79822,-37.52422 -37.52422,-37.52422c-19.80867,0 -31.27578,17.2 -31.27578,17.2c0,0 -11.46711,-17.2 -31.27578,-17.2z"></path></g></g></svg>');
+          $('.unlike' + id).html('<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="27" height="27" viewBox="0 0 172 172" style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><path d="M0,172v-172h172v172z" fill="none"></path><g fill="#800080"><path d="M54.72422,22.93333c-20.726,0 -37.52422,16.79822 -37.52422,37.52422c0,36.07642 41.84746,70.54796 61.39817,85.89922c0.01862,0.01499 0.03728,0.02992 0.05599,0.04479c0.13396,0.10517 0.31608,0.25498 0.44792,0.35833l0.0112,-0.0112c1.98358,1.4988 4.40056,2.31232 6.88672,2.31797c2.48999,-0.00322 4.91127,-0.81686 6.89792,-2.31797v0.0112c0.03859,-0.03025 0.09561,-0.07038 0.13437,-0.10078c0.02948,-0.02312 0.0712,-0.05517 0.10079,-0.07839c0.03755,-0.03335 0.07487,-0.06694 0.11198,-0.10078c19.49011,-15.2961 61.55495,-49.85989 61.55495,-86.02239c0,-20.726 -16.79822,-37.52422 -37.52422,-37.52422c-19.80867,0 -31.27578,17.2 -31.27578,17.2c0,0 -11.46711,-17.2 -31.27578,-17.2z"></path></g></g></svg>');
+          var i_like = document.getElementById('i_like_it' + id);
+          i_like.style.display = "block";
+        }
+        else if (data.unlikedit){
+          $('.unlike' + id).html('<img src="https://img.icons8.com/nolan/27/like.png"/>');
+          $('.like' + id).html('<img src="https://img.icons8.com/nolan/27/like.png"/>');
+          var i_like = document.getElementById('i_like_it' + id);
+          i_like.style.display = "none";
+          var i_like_list = document.getElementById('i_like_list' + id);
+          i_like_list.style.display = "none";
+        }
+      },
+    })
+  });
+
+  $('.infinite-container').on('click', '.all_likes', function(){
+    var id = $(this).attr("data-catid");
+    window.history.pushState({}, '', '/post/' + id + '/likes/');
+    var modal = document.getElementById("mymodal" + id);
+    modal.style.display = "block";
+    $('#close' + id).click(function(){
+      window.history.back();
+      window.history.forword();
+    })
+    window.onclick = function(event){
+     if(event.target == modal){
+       window.history.back();
+       window.history.forword();
+     }
+    }
+  })
+
+  $(".infinite-container").on('click', '.open-share', function(){
+    var id = $(this).attr('data-catid');
+    window.history.pushState({}, '', '/post/' + id + '/share/');
+    var share = document.getElementById('share-modal' + id);
+    share.style.display = "block";
+    $('#share-close' + id).click(function(){
+      window.history.back();
+      window.history.forword();
+    })
+    window.onclick = function(event){
+     if(event.target == share){
+       window.history.back();
+       window.history.forword();
+     }
+    }
+  })
+
+  $('.infinite-container').on('click', '.copy-btn', function(){
+    var id = $(this).attr("post-id");
+    var copyTextarea = document.getElementById("socail-link-copy" + id);
+    copyTextarea.select(); //select the text area
+    document.execCommand("copy"); //copy to clipboard
+    alert("Copied! -> '" + copyTextarea.value + "'");
+  })
+
+  $('.infinite-container').on('submit', '.send-mail', function(){
+    var id = $(this).attr("data-catid");
+    var wait_gmail = document.getElementById('send_mail' + id);
+    wait_gmail.style.cursor = "wait";
+    var gmail = document.getElementById('gmail' + id);
+    gmail.style.cursor = "wait";
+    $.ajax({
+      type: "GET",
+      url: "{% url 'persona:gmail' %}",
+      dataType: "json",
+      data: {
+        to_gmail: gmail.value,
+        post_id: id,
+      },
+      success: function(data){
+        if (data.done){
+          wait_gmail.style.cursor = "pointer";
+          gmail.style.cursor = "text";
+          alert("Email Sent!");
+        }
+      }
+    })
+    return false;
+  })
+
+  $('.infinite-container').on('click', '.show-comment', function(){
+    var id = $(this).attr('data-catid');
+    window.history.pushState({}, '', '/post/' + id + '/comments/');
+    var comments = document.getElementById('comment-modal' + id);
+    comments.style.display = "block";
+    $('#close-comment' + id).click(function(){
+      window.history.back();
+      window.history.forword();
+    });
+    window.onclick = function(event){
+      if(event.target == comments ){
+        window.history.back();
+        window.history.forword();
+      }
+    }
+  })
+
+  const monthNames = ["January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+  var d = new Date();
+  var time_h = d.getHours()
+  var ap = ' a.m.'
+  if (d.getHours() > 12){
+    time_h -= 12;
+    ap = ' p.m.'
+  }
+  var date = monthNames[d.getMonth()] + ' '  + d.getDate() + ', ' + d.getFullYear() + ', ' + time_h + ':' + d.getMinutes() + ' p.m.';
+
+  $('.infinite-container').on('click', '#comment-submit', function(){
+    var id = $(this).attr('data-catid');
+    var comment = document.getElementById('comment-input' + id);
+    comment.style.cursor = "wait";
+    $.ajax({
+      type: "GET",
+      url: "{% url 'persona:comment-it' %}",
+      dataType: "json",
+      data: {post_id: id, comment_txt: comment.value},
+      success: function(data){
+        comment.style.cursor = "text";
+        $('#no_comment' + id).html(data.no_comments + " Comments");
+        $('#all-comments' + id).html(data.no_comments + " Comments");
+        var large = "<div class='comment' id='comment" + data.c_id + "'><img src='{{ request.user.profile.dp.url }}' id='c-user-dp'><div id='c-user-txt'><div id='c-user'><strong>{{ request.user.username }}</strong><div id='c-date-time'>" + date + "</div></div><div id='c-txt-d'><p>" + comment.value + "</p><button id='c-delete' class='c-delete' data-catid='" + data.c_id + "' data-catid-post='" + id + "'>Delete</button></div></div></div>";
+        $('.detail-all_comments' + id).append(large);
+        document.getElementById('comment-div' + id).reset();
+      },
+    })
+    return false;
+  })
+
+  $('.infinite-container').on('click', '.c-delete', function(){
+    var c_id = $(this).attr('data-catid');
+    var post_id = $(this).attr('data-catid-post');
+    var token = "{{ csrf_token }}";
+    $.ajax({
+      headers: { "X-CSRFToken": token },
+      type: "POST",
+      url: "{% url 'persona:delete-comment-it' %}",
+      dataType: "json",
+      data: {
+        c_id: c_id
+      },
+      success: function(data){
+        $('#no_comment' + post_id).html(data.no_comments + " Comments");
+        $('#all-comments' + post_id).html(data.no_comments + " Comments");
+        var hide_c_temp = document.getElementById('comment' + c_id);
+        hide_c_temp.style.display = "none";
+      },
+    })
+  })
+
+  $('.infinite-container').on('click', '#detail-read-more', function(){
+    var id = $(this).attr('data-catid');
+    $('#detail-post-info' + id).hide();
+    document.getElementById('detail-post-info-full' + id).style.display = "block";
+    $('.detail-all_comments' + id).hide();
+  })
+  $('.infinite-container').on('click', '#detail-read-less', function(){
+    var id = $(this).attr('data-catid');
+    $('#detail-post-info' + id).show();
+    document.getElementById('detail-post-info-full' + id).style.display = "none";
+    $('.detail-all_comments' + id).show();
+  })
+
+</script>
+{% endblock body %}

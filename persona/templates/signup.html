@@ -1,0 +1,87 @@
+{% include "base.html" %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'form.css' %}">
+{% block body %}
+{% endblock body %}
+
+<style media="screen">
+  @media only screen and (max-width: 600px) {
+    #main-form h3{
+      margin-left: 0px;
+      text-align: center;
+    }
+  }
+</style>
+
+<div id="form-loading">
+  <div id="form-loading-content">
+    <div class="loadingio-spinner-pulse-g8miipkqk5m"><div class="ldio-4quiydv9bgo">
+    <div></div><div></div><div></div>
+    </div></div>
+    <div style="font-size:30px;">
+      Creating Persona (Profile) . . .
+    </div>
+  </div>
+</div>
+
+{% if messages %}
+  {% for message in messages %}
+      <div class="{{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+
+<div id="main-div-signup">
+  <div id="main-form">
+    <h3>Create an account</h3>
+    {% if message %}
+      <div id="message">
+        <strong>{{ message }}</strong>
+      </div>
+    {% endif %}
+    <form class="f" id="f-signup" action="{% url 'persona:signup' %}" method="post">
+      {% csrf_token %}
+      {% for f in form %}
+      <div id="one-signup">
+        {{ f.label_tag }} &nbsp; &nbsp;
+        {{ f }}
+        {% if f.help_text %}
+          <small style="color: gray;">{{ f.help_text }}</small>
+        {% endif %}
+        {% for error in f.errors %}
+          <br>
+          <small style="color: red;">{{ error }}</small>
+        {% endfor %}
+        <br><br class="hide-for-pc">
+      </div>
+      {% endfor %}
+      <br>
+      <div id="signup-login">
+        <button type="submit" id="button">Sign up</button> &nbsp;&nbsp;
+        Have an account? <a href="{% url 'persona:login' %}">Log in</a>
+      </div>
+      <small id="privacy-terms">By signing up, you agree to our <a href="#">Privacy Policies</a> and <a href="#">Tearms & Conditions</a>.</small>
+    </form>
+  </div>
+
+  <div id="persona">
+    <div id="persona-2">
+      <h1>Persona</h1>
+      <p>The aspect of someone's character that is presented to or perceived by others.</p>
+      <p>
+        A persona, in the word's everyday usage, is a social role or a character played by an actor. The word is derived from Latin, where it originally referred to a theatrical mask.
+      </p>
+      <p>
+        The persona, for Swiss psychiatrist Carl Jung, was the social face the individual presented to the world—"a kind of mask, designed on the one hand to make a definite impression upon others, and on the other to conceal the true nature of the individual".
+      </p>
+      <p>Source: <a href="https://en.wikipedia.org/wiki/Persona">Wikipedia</a> & <a href="https://www.lexico.com/en/definition/persona">Oxford</a></p>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $('#f-signup').submit(function(){
+    var loading = document.getElementById('form-loading');
+    loading.style.display = "block";
+  })
+</script>

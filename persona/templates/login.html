@@ -1,0 +1,64 @@
+{% include "base.html" %}
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'form.css' %}">
+{% block body %}
+{% endblock body %}
+
+<style media="screen">
+  @media only screen and (max-width: 600px) {
+    #id_username{
+      width: 250px;
+    }
+  }
+</style>
+
+<div id="form-loading">
+  <div id="form-loading-content">
+    <div class="loadingio-spinner-pulse-g8miipkqk5m"><div class="ldio-4quiydv9bgo">
+    <div></div><div></div><div></div>
+    </div></div>
+    <div style="font-size:30px;">
+      Loging In . . .
+    </div>
+  </div>
+</div>
+
+
+<div id="main-div-login">
+  {% if messages %}
+    {% for message in messages %}
+    <div class="message">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+  <div id="main-form-login">
+    <h3>Log In</h3>
+    {% if error %}
+      <div id="message">
+        <small style="color:red;">{{ error }}</small>
+      </div>
+    {% endif %}
+    <form class="f-login" id="f" action="{% url 'persona:login' %}" method="post">
+      {% csrf_token %}
+      {% for f in form %}
+        {{ f.label_tag }} &nbsp; &nbsp;
+        {{ f }}
+        <br><br>
+      {% endfor %}
+      <button type="submit" id="button-login">Login</button>
+    </form>
+    <div id="login-signup">
+      Don't have an account? <a href="{% url 'persona:signup' %}" id="signup-link">Sign up</a>
+      <br><a href="{% url 'reset_password' %}" id="forgot-password">Forgot Password?</a>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $('#f').submit(function(){
+    var page = document.getElementById('main-div-login');
+    page.style.display = "none";
+    var loading = document.getElementById('form-loading');
+    loading.style.display = "block";
+  })
+</script>
